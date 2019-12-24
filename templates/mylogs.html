@@ -1,0 +1,49 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="normalPanel">
+    <h1>Add a new log</h1>
+    <p>Enter day weight in {{ current_user.weight_measurement_preference }}</p>
+    <form method="POST" action="" class="form" id="form">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.date) }} 
+    
+        {{ render_field(form.cal_plus) }}
+        {{ render_field(form.cal_minus) }}
+        
+        {{ render_field(form.day_weight) }}
+        
+    </form>
+    <button form="form" type="submit" class="submit" value="Submit">Add!</button>
+</div>
+
+<div class="normalPanel">
+    <h1>Here are your logs</h1>
+    <table style="width:100%">
+        <tr>
+            <th>Date</th>
+            <th>Calories In</th> 
+            <th>Calories Out</th>
+            <th>Weight</th>
+            <th>Analysis</th>
+            <th></th>
+        </tr>
+        {% for day_data in day_datas %}
+        <tr>
+            <td>{{ day_data.date }}</td> 
+            <td>{{ day_data.calorie_plus }}</td>  
+            <td>{{ day_data.calorie_minus }}</td>  
+            <td>{{ day_data.dayweight_calculated() }}</td>
+            <td>{{ day_data.deficit_analysis_method() }}</td>
+            <td><a href="{{ url_for('remove_log', day_date=day_data.date) }}" class="small">Remove</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+    
+
+
+{% endblock %}

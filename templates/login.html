@@ -1,0 +1,16 @@
+{% from 'macros.html' import render_field %}
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="normalPanel">
+        <h1>Please enter your credentials</h1>
+        <form method="POST" action="" class="form" id="form">
+            {{ form.hidden_tag() }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+        </form>
+        <button form="form" type="submit" class="submit" value="Submit">Login!</button>
+
+        <a href="{{ url_for('register') }}"><button type="submit" class="submit" value="Submit">Register</button></a>
+    </div>
+{% endblock %}

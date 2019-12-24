@@ -1,0 +1,55 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+
+    <div class="normalPanel">
+        <h1>Your stats</h1>
+            <p><b>Username:</b> {{ current_user.username }}</p>
+            <p><b>Email:</b> {{ current_user.email }}</p>
+            <p><b>Weight:</b> {{ current_user.weight_calculated() }}</p>
+            <p><b>Height:</b> {{ current_user.height_calculated() }}</p>
+            <p><b>Gender:</b> {{ current_user.gender }}</p>
+            <p><b>Age:</b> {{ current_user.age_calculated() }}</p>
+
+            <form method="POST" action="" class="form" id="form5">
+                {{ form1.hidden_tag() }}
+                <p>Enter weight in {{ current_user.weight_measurement_preference }}</p>
+                {{ render_field(form1.weight) }}
+                <p>Enter height in {{ current_user.height_measurement_preference }}</p>
+                {{ render_field(form1.height) }}
+
+                <p>Enter your birth date</p>
+                {{ render_field(form1.birth_date) }}
+
+
+                {% for subfield in form1.gender %}
+                <tr>
+                    <td>{{ subfield }}</td>
+                    <td>{{ subfield.label }}</td>
+                </tr>
+                {% endfor %}
+                
+                <br>
+                {% for subfield in form1.weight_measurement_preference %}
+                <tr>
+                    <td>{{ subfield }}</td>
+                    <td>{{ subfield.label }}</td>
+                </tr>
+                {% endfor %}
+                <br>
+                {% for subfield in form1.height_measurement_preference %}
+                <tr>
+                    <td>{{ subfield }}</td>
+                    <td>{{ subfield.label }}</td>
+                </tr>
+                {% endfor %}
+
+
+            </form>
+            <button form="form5" type="submit" class="submit" value="Submit">Update!</button>
+            <br>
+            <!--<a href="{{ url_for('home') }}"><button type="submit" class="submit" value="Submit">Back</button></a>-->
+    </div>
+{% endblock %}

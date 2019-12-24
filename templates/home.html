@@ -1,0 +1,59 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="normalPanel">
+    <h1>Welcome 
+    {% if current_user.is_authenticated %}
+    {{ current_user.username }}
+    {% endif %}!
+    </h1>
+    <p class="rText">This app will transform the way you do your fitness.</p>
+    <p class="rText">It no longer will be a game of guesses, this will be a game of science and facts!</p>
+</div>
+<div class="normalPanel">
+    <h1>How it works?</h1>
+    <p class="rText">This app generates the daily goals using your parameters and your desired bodyweight loss per week. 
+        You can also set the goals manually. 
+        The goals are how many calories you need to consume and burn per day. 
+        You will need to enter a log each day with the calories you burnt, consumed and your body weight. 
+        The app will calculate the difference between the goals and the enteted data and will give you the balance.
+        The balance will either increase or decrease, depending if you stick to the goals.
+        Even if the balance goes negative, you still can make it up in the future and get back on track.
+        I believe in the flexibility and the app will deliver the flexiblity in your weight loss.</p>
+</div>
+
+{% if results != None %}
+<div class="normalPanel">
+    <h1>Here are the daily goals for you!</h1>
+    <p>Burn {{ results.get("cal_minus_goal") }} and consume {{ results.get("cal_plus_goal") }}</p>
+</div>
+{% endif %}
+
+
+{% if not current_user.is_authenticated %}
+<div class="normalPanel">
+    <h1>Here is a calculator to generate the daily goals!</h1>
+    <form method="POST" class="form" id="form12">
+        {{ form.hidden_tag() }}
+      
+        {{ render_field(form.weight) }}
+    
+        {{ render_field(form.height) }}
+        
+        {{ render_field(form.age) }}
+        {% for subfield in form.gender %}
+        <tr>
+            <td>{{ subfield }}</td>
+            <td>{{ subfield.label }}</td>
+        </tr>
+        {% endfor %}
+        <p>Enter how much weight in KG do you want to lose in a week</p>    
+        {{ render_field(form.bw_goal) }}
+    </form>
+    <button form="form12" type="submit" class="submit" value="Submit">Generate!</button>
+</div>
+{% endif %}!
+
+{% endblock %}

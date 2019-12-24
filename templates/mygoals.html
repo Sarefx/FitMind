@@ -1,0 +1,53 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="normalPanel">
+    <h1>Your goals are</h1>
+    <p>Burn <b>{{ current_user.calorie_minus_goal }}</b> and consume <b>{{ current_user.calorie_plus_goal }}</b> calories.</p>
+    <p>You <b>calorie balance</b> is <b>{{ current_user.calorie_balance }}</b></p>
+    <p>Last time you counted the balance is <b>{{ current_user.last_time_counted.strftime("%Y-%m-%d") }}</b></p>
+    <!--
+    <p class="rText">This app will transform the way you do your fitness.</p>
+    <p class="rText">Its no longer going to be a game of guesses, this will be a game of science and facts!</p>
+    <p class="rText">The anwser to everyone's pleas is here!</p>
+    -->
+</div>
+
+<div class="normalPanel">  
+    <p>It will also count all uncounted days leading up to yesterday</p>
+    <a href="{{ url_for('count_yesterday') }}"><button type="submit" class="submit" value="Submit">Count Yesterday!</button></a>
+</div>
+    
+<div class="normalPanel">
+    <p>For testing purposes, you can set the last counted date below</p>
+    <form method="POST" action="" class="form" id="form12">
+        {{ form3.hidden_tag() }}
+        {{ render_field(form3.last_counted_date) }}
+    </form>
+    <button form="form" type="submit" class="submit" value="Submit">Set the Last Counted Date!</button>
+</div>
+
+<div class="normalPanel">
+    <h1>Set your goals</h1>
+    <form method="POST" action="" class="form" id="form11">
+        {{ form1.hidden_tag() }}
+        {{ render_field(form1.calorie_minus_goal) }}
+        {{ render_field(form1.calorie_plus_goal) }}
+        {{ render_field(form1.calorie_balance) }}
+    </form>
+    <button form="form11" type="submit" class="submit" value="Submit">Set!</button>
+</div>
+<div class="normalPanel">
+    <h1>Generate Goals</h1>
+    <p>Enter how much weight in KG do you want to lose in a week</p>
+    <form method="POST" action="" class="form" id="form12">
+        {{ form2.hidden_tag() }}
+        {{ render_field(form2.bw_goal) }}
+    </form>
+    <button form="form12" type="submit" class="submit" value="Submit">Generate!</button>
+</div>
+
+
+{% endblock %}
