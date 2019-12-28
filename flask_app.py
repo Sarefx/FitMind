@@ -41,10 +41,20 @@ def home():
     
     if form.validate_on_submit():
         weight = form.weight.data
+        weight_measurement_preference = form.weight_measurement_preference.data
+        if weight_measurement_preference == "lbs":
+            weight = weight / 2.20462
         height = form.height.data
+        height_measurement_preference = form.height_measurement_preference.data
+        if height_measurement_preference == "inches":
+            height = height / 0.393701
         age = form.age.data
         gender = form.gender.data
+
         bw_goal = form.bw_goal.data
+        bw_goal_measurement_preference = form.bw_goal_measurement_preference.data
+        if bw_goal_measurement_preference == "lbs":
+            bw_goal = bw_goal / 2.20462
         results = fitmind.generate_goals2(weight,height,age,gender,bw_goal)
 
         return render_template('home.html', form=form, results=results)
@@ -331,5 +341,5 @@ def not_found(error):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    #app.run(debug=True, port=8000, host='0.0.0.0')
-    app.run()
+    app.run(debug=True, port=8000, host='0.0.0.0')
+    #app.run()

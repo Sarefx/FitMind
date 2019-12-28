@@ -7,11 +7,14 @@
     <h1>Welcome 
     {% if current_user.is_authenticated %}
     {{ current_user.username }}
-    {% endif %}!
+    {% endif %}
     </h1>
-    <p class="rText">This app will transform the way you do your fitness.</p>
-    <p class="rText">It no longer will be a game of guesses, this will be a game of science and facts!</p>
+    <p class="rText">This app will help transform the way you interpert your fitness progress.</p>
+    <!--<p class="rText">It no longer will be a game of guesses, this will be a game of science and facts!</p>-->
+    <p class="rText">Please register a profile to utilize the whole app.</p>
+    <a href="{{ url_for('register') }}"><button type="submit" class="submit" value="Submit">Register</button></a>
 </div>
+{% if current_user.is_authenticated %}
 <div class="normalPanel">
     <h1>How it works?</h1>
     <p class="rText">This app generates the daily goals using your parameters and your desired bodyweight loss per week. 
@@ -23,25 +26,36 @@
         Even if the balance goes negative, you still can make it up in the future and get back on track.
         I believe in the flexibility and the app will deliver the flexiblity in your weight loss.</p>
 </div>
-
+{% endif %}
 {% if results != None %}
 <div class="normalPanel">
     <h1>Here are the daily goals for you!</h1>
-    <p>Burn {{ results.get("cal_minus_goal") }} and consume {{ results.get("cal_plus_goal") }}</p>
+    <p>Burn {{ results.get("cal_minus_goal") }} calories and consume {{ results.get("cal_plus_goal") }} calories</p>
 </div>
 {% endif %}
 
 
 {% if not current_user.is_authenticated %}
 <div class="normalPanel">
-    <h1>Here is a calculator to generate the daily goals!</h1>
+    <p class="rText">If you dont want to create a profile, here is a simple calculator to generate the daily goals using Basal Metabolic Rate with your parameters.</p>
+
     <form method="POST" class="form" id="form12">
         {{ form.hidden_tag() }}
-      
+
         {{ render_field(form.weight) }}
-    
+        {% for subfield in form.weight_measurement_preference %}
+        <tr>
+            <td>{{ subfield }}</td>
+            <td>{{ subfield.label }}</td>
+        </tr>
+        {% endfor %}
         {{ render_field(form.height) }}
-        
+        {% for subfield in form.height_measurement_preference %}
+        <tr>
+            <td>{{ subfield }}</td>
+            <td>{{ subfield.label }}</td>
+        </tr>
+        {% endfor %}
         {{ render_field(form.age) }}
         {% for subfield in form.gender %}
         <tr>
@@ -49,10 +63,19 @@
             <td>{{ subfield.label }}</td>
         </tr>
         {% endfor %}
-        <p>Enter how much weight in KG do you want to lose in a week</p>    
+        <br>
+        How much weight do you want to lose in a week?
         {{ render_field(form.bw_goal) }}
+        {% for subfield in form.bw_goal_measurement_preference %}
+        <tr>
+            <td>{{ subfield }}</td>
+            <td>{{ subfield.label }}</td>
+        </tr>
+        {% endfor %}
+
+
     </form>
-    <button form="form12" type="submit" class="submit" value="Submit">Generate!</button>
+    <button form="form12" type="submit" class="submit" value="Submit">Generate</button>
 </div>
 {% endif %}!
 

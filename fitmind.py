@@ -1,7 +1,7 @@
 import datetime
 import db
 
-fitbit_error = 1.081371241854802374
+fitbit_error = 1.0123145423513231
 
 
 
@@ -89,8 +89,8 @@ def get_base_general_goals(bw):
     caloriesConsumeBenchmark_new_formula = (88.362 + (4.799 * average_human_height) + (13.397 * bw) - (5.677 * median_human_age_usa)) * 1.3 
     #print(caloriesConsumeBenchmark_new_formula)
 
-    calories_consume_benchmark = bw * 23
-    calories_burn_benchmark = bw * 27
+    calories_consume_benchmark = bw * 23.5
+    calories_burn_benchmark = bw * 27.5
 
     #print("Starting calorie goals are ",calories_consume_benchmark," and ",calories_burn_benchmark)
     

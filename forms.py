@@ -87,10 +87,11 @@ class SetLastCountedDate(FlaskForm):
 
 class GenerateGoals2(FlaskForm):
 
-    weight = FloatField('Bodyweight in KG',validators=[DataRequired()])
-    height = FloatField('Height in CM',validators=[DataRequired()])
+    weight = FloatField('Bodyweight',validators=[DataRequired()])
+    weight_measurement_preference = RadioField('weight_measurement_preference', choices=[("lbs","lbs"), ("kg","kg")],validators=[InputRequired()])
+    height = FloatField('Height',validators=[DataRequired()])
+    height_measurement_preference = RadioField('height_measurement_preference', choices=[("inches","inches"), ("cm","cm")],validators=[InputRequired()])
     age =  IntegerField('Age',validators=[DataRequired()])
-    gender = RadioField('gender', choices=[("male","Male"), ("female","Female"), ("other","Other")],
-            validators=[InputRequired()])
+    gender = RadioField('gender', choices=[("male","Male"), ("female","Female"), ("other","Other")],validators=[InputRequired()])
     bw_goal = FloatField('',validators=[DataRequired()])
-
+    bw_goal_measurement_preference = RadioField('bw_goal_measurement_preference', choices=[("lbs","lbs"), ("kg","kg")],validators=[InputRequired()])
