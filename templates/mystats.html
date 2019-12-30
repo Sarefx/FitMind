@@ -30,7 +30,7 @@
                     <td>{{ subfield.label }}</td>
                 </tr>
                 {% endfor %}
-                
+                <p><b>You can change your measurement prefernce.</b></p>
                 <br>
                 {% for subfield in form1.weight_measurement_preference %}
                 <tr>
@@ -48,7 +48,7 @@
 
 
             </form>
-            <button form="form5" type="submit" class="submit" value="Submit">Update!</button>
+            <button form="form5" type="submit" class="submit" value="Submit">Update</button>
             <br>
             <!--<a href="{{ url_for('home') }}"><button type="submit" class="submit" value="Submit">Back</button></a>-->
     </div>

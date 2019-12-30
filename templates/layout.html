@@ -11,13 +11,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="180">
 
-
-
-
-
     </head>
     <body>
-        <div class="normalPage">
+        <div class="normalPage wrapper"" >
             <header>
                 <div class="nav">
                     <div class="nav-header">
@@ -49,6 +45,10 @@
             {% endwith %}                       
         {% block content %}
         {% endblock %}
-    </div>  
+    <div class="push"></div>    
+    </div>
+    <footer class="footer">
+        <p class="footer-text">Designed by Nikita Koba. Contact nikitakoba93@gmail.com</p>
+    </footer>
     </body>
 </html>

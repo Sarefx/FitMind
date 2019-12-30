@@ -17,7 +17,7 @@
 
 <div class="normalPanel">  
     <p>It will also count all uncounted days leading up to yesterday</p>
-    <a href="{{ url_for('count_yesterday') }}"><button type="submit" class="submit" value="Submit">Count Yesterday!</button></a>
+    <a href="{{ url_for('count_yesterday') }}"><button type="submit" class="submit" value="Submit">Count Yesterday</button></a>
 </div>
     
 <div class="normalPanel">
@@ -26,7 +26,7 @@
         {{ form3.hidden_tag() }}
         {{ render_field(form3.last_counted_date) }}
     </form>
-    <button form="form" type="submit" class="submit" value="Submit">Set the Last Counted Date!</button>
+    <button form="form" type="submit" class="submit" value="Submit">Set the Last Counted Date</button>
 </div>
 
 <div class="normalPanel">
@@ -37,7 +37,7 @@
         {{ render_field(form1.calorie_plus_goal) }}
         {{ render_field(form1.calorie_balance) }}
     </form>
-    <button form="form11" type="submit" class="submit" value="Submit">Set!</button>
+    <button form="form11" type="submit" class="submit" value="Submit">Set</button>
 </div>
 <div class="normalPanel">
     <h1>Generate Goals</h1>
@@ -46,7 +46,7 @@
         {{ form2.hidden_tag() }}
         {{ render_field(form2.bw_goal) }}
     </form>
-    <button form="form12" type="submit" class="submit" value="Submit">Generate!</button>
+    <button form="form12" type="submit" class="submit" value="Submit">Generate</button>
 </div>
 
 

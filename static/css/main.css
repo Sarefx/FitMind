@@ -1,12 +1,32 @@
 
-
-
-
-
-body {
+html, body {
+  height: 100%;
   font-family: sans-serif;
   background-color:white;
+  margin: 0;
+}
+.wrapper {
+  min-height: 100%;
 
+  /* Equal to height of footer */
+  /* But also accounting for potential margin-bottom of last child */
+  margin-bottom: -100px;
+}
+footer {
+  height: 40px;
+  padding: 3px 20px;
+  background: #344269;
+  color: white;
+}
+.footer,
+.push {
+  height: 50px;
+}
+.footer{
+  margin-top: 50px;
+}
+.footer-text{
+  text-align: center;
 }
 
 h1{
@@ -32,81 +52,7 @@ h2{
   font-size: 130%;
 }
 
-.signin {
-  color: #A4A7A8;
-}
-.username {
-  width: 76%;
-  color: rgb(38, 50, 56);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 1px;
-  background: rgba(136, 126, 126, 0.04);
-  padding: 10px 20px;
-  border-radius: 20px;
-  box-sizing: border-box;
-  border: 2px solid #AFBABD;
-  margin-bottom: 50px;
-  margin-left: 44px;
-  margin-right: 28px;
-  text-align: center;
-  margin-bottom: 27px;
-}
-.password {
-  width: 76%;
-  color: rgb(38, 50, 56);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 1px;
-  background: rgba(136, 126, 126, 0.04);
-  padding: 10px 20px;
-
-  border-radius: 20px;
-  box-sizing: border-box;
-  border: 2px solid #AFBABD;
-  margin-bottom: 50px;
-  margin-left: 44px;
-  margin-right: 28px;
-  text-align: center;
-  margin-bottom: 27px;
-}
-/*
-.normalPage{
-  background-color:#C5C9CA;
-}
-*/
-.submit {
-  border-radius: 5em;
-  color: #fff;
-  background: rgb(188, 188, 235);
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-bottom: 10px;
-  padding-top: 10px;
-  font-family: sans-serif;
-  margin-left: 3px;
-  margin: 10px;
-  font-size: 13px;
-  box-shadow: 0 0 20px 1px;
-}
-
-button{
-padding: 0;
-margin: 5;
-margin-left: 20;
-background-color: #44449B;
-border: none;
-color: white;
-padding: 0px 34px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-font-size: 18px;
-border-radius: 5px;
-border-color: darkblue;
-border-width: medium;
-}
-
+/***** NAVIGATION ******/
 * {
   box-sizing: border-box;
 }
@@ -143,7 +89,7 @@ border-width: medium;
 }
 
 .nav > .nav-links > a:hover {
-  background-color:rgb(13, 71, 92);
+  background-color:#344269;
 }
 
 
@@ -166,37 +112,30 @@ color: #777B7E;
 }
 input:focus {
 border-color: rgb(218, 10, 10);
-/*
-border-color: #6ECDF7;
-*/
 color: #2C3238;
 }
-/*
-textarea {
-width: 100%;
-border: 0;
-border-bottom: 2px solid #D3D8DC;
-outline: 0;
-background: #fff;
-padding: 20px 0 4px;
-margin: 0 0 20px;
-color: #777B7E;
+
+.submit {
 }
-textarea:focus {
-border-color: #6ECDF7;
-color: #2C3238;
-}
-*/
-button {
+button{
 width: 100%;
-padding: 20px 0;
+padding: 10;
+margin: 10px;
+background-color: rgb(188, 188, 235);
+border: none;
+color: white;
+padding: 10px 10px;
 text-align: center;
-background: #6ECDF7;
-color: #fff;
-border: 0;
-border-radius: 4px;
-opacity: .8;
-transition: .35s linear;
+display: inline-block;
+font-size: 18px;
+border-radius: 5em;
+border-color: darkblue;
+border-width: medium;
+transition: .30s linear;
+    /*
+    box-shadow: 0 0 20px 1px;
+    text-decoration: none;
+    */
 }
 button:hover {
 opacity: 1;
@@ -207,21 +146,6 @@ button.small {
   text-align: center;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*FOREIGN CSS!!!!!!!!!!!!!*/
 /*Notifications*/
 .notification {
   text-align: center;
