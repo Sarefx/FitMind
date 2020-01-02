@@ -1,5 +1,5 @@
-
 html, body {
+  /**/
   height: 100%;
   font-family: sans-serif;
   background-color:white;
@@ -7,13 +7,14 @@ html, body {
 }
 .wrapper {
   min-height: 100%;
-
   /* Equal to height of footer */
   /* But also accounting for potential margin-bottom of last child */
-  margin-bottom: -100px;
+  margin-bottom: -50px;
 }
 footer {
   height: 40px;
+  width: 100%;
+  min-width: 350px;
   padding: 3px 20px;
   background: #344269;
   color: white;
@@ -29,23 +30,25 @@ footer {
   text-align: center;
 }
 
-h1{
-  font-size: 130%;
-}
-h2{
+h1, h2{
   font-size: 130%;
 }
 
 .normalPanel{
-  /**/
-  background-color: rgb(182, 225, 243);
+  /*
   margin: 1em auto;
+  font-size: 100%;
+  */
+  margin: 40px auto;
+  background-color: rgb(182, 225, 243);
   padding: 20px;
   border-radius: 1.5em;
   box-shadow: 0px 11px 35px 2px rgba(0, 0, 0, 0.14);
   text-align:center;
-  font-size: 100%;
-  width: 750px;
+  max-height: 1000px;
+  min-height: 200px;
+  max-width: 700px;
+  min-width: 350px;
 }
 
 .rText{
@@ -60,10 +63,12 @@ h2{
 .nav {
   height: 65px;
   width: 100%;
+  min-width: 350px;
   background-color: #8880f3;
   position: relative;
 }
-
+/*
+*/
 .nav > .nav-header {
   display: inline;
 }
@@ -92,6 +97,24 @@ h2{
   background-color:#344269;
 }
 
+@media screen and (max-width: 700px) {
+  .nav {
+    height: 120px;
+  }
+  .nav > .nav-header > .nav-title {
+  }
+  .nav > .nav-links {
+  }
+}
+@media screen and (max-width: 570px) {
+  .nav {
+    height: 190px;
+  }
+  .nav > .nav-header > .nav-title {
+  }
+  .nav > .nav-links {
+  }
+}
 
 /*Form Elements*/
 form {
@@ -102,43 +125,45 @@ input {
   /*
   width: 100%;
   */
-border: 0;
-border-bottom: 2px solid #D3D8DC;
-outline: 0;
-background: #fff;
-padding: 10px 0 10px;
-margin: 5px 0 5px;
-color: #777B7E;
+  border: 0;
+  border-bottom: 2px solid #D3D8DC;
+  outline: 0;
+  background: #fff;
+  padding: 10px 0 10px;
+  margin: 5px 0 5px;
+  color: #777B7E;
 }
 input:focus {
-border-color: rgb(218, 10, 10);
-color: #2C3238;
+  border-color: rgb(218, 10, 10);
+  color: #2C3238;
 }
 
 .submit {
+  /* Same info as button */
 }
+
 button{
-width: 100%;
-padding: 10;
-margin: 10px;
-background-color: rgb(188, 188, 235);
-border: none;
-color: white;
-padding: 10px 10px;
-text-align: center;
-display: inline-block;
-font-size: 18px;
-border-radius: 5em;
-border-color: darkblue;
-border-width: medium;
-transition: .30s linear;
-    /*
-    box-shadow: 0 0 20px 1px;
-    text-decoration: none;
-    */
+  width: 100%;
+  padding: 10;
+  margin: 10px;
+  background-color: rgb(188, 188, 235);
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  display: inline-block;
+  font-size: 18px;
+  border-radius: 5em;
+  border-color: darkblue;
+  border-width: medium;
+  transition: .30s linear;
+  /*
+  box-shadow: 0 0 20px 1px;
+  text-decoration: none;
+  */
 }
 button:hover {
-opacity: 1;
+  opacity: 1;
 }
 button.small {
   padding: 1em 0.5em;
