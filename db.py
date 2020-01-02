@@ -5,6 +5,7 @@ from flask_bcrypt import generate_password_hash,check_password_hash
 from playhouse.migrate import *
 
 DATABASE = SqliteDatabase('users.db')
+#DATABASE = SqliteDatabase('test_users.db')
 
 
 class User(UserMixin, Model):
