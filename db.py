@@ -19,7 +19,7 @@ class User(UserMixin, Model):
 
     birth_date = DateField(default=datetime.date.today)
 
-    weight_measurement_preference =  CharField(default='kg', max_length=10) # other choice is lb
+    weight_measurement_preference =  CharField(default='kg', max_length=10) # other choice is lbs
     height_measurement_preference =  CharField(default='cm', max_length=10) # other choice is in
     
     calorie_plus_goal = IntegerField(default=0)
@@ -36,7 +36,7 @@ class User(UserMixin, Model):
     def set_weight(self, weight):
         if self.weight_measurement_preference == "kg":
             weight = weight
-        elif self.weight_measurement_preference == "lb":
+        elif self.weight_measurement_preference == "lbs":
             weight = weight / 2.20462
         self.weight = weight
 
@@ -49,14 +49,14 @@ class User(UserMixin, Model):
         
     def weight_calculated(self):
         if self.weight_measurement_preference == "kg":
-            return str(int(self.weight)) + " kgs"
-        elif self.weight_measurement_preference == "lb":
+            return str(int(self.weight)) + " kg"
+        elif self.weight_measurement_preference == "lbs":
             weight_lbs = self.weight * 2.20462
             return  str(int(weight_lbs)) + " lbs"
 
     def height_calculated(self):
         if self.height_measurement_preference == "cm":
-            return str(int(self.height)) + " cms"
+            return str(int(self.height)) + " cm"
         elif self.height_measurement_preference == "in":
             height_inches = int(self.height * 0.393701)
             height_feet = int(height_inches / 12)
@@ -104,7 +104,7 @@ class DayData(Model):
 
     deficit_analysis = IntegerField(default=0) # 0 within 50 calories, +-1 within 200, +-2 within 500, +-3 within 1000, +-4 over 1000
 
-    dayweight = FloatField(default=0) # in kgs
+    dayweight = FloatField(default=0) # in kg
     date = DateField(unique=False)
     user = ForeignKeyField(User, backref='data')
 
@@ -138,16 +138,16 @@ class DayData(Model):
     def dayweight_calculated(self):
         measurement = self.user.weight_measurement_preference
         if measurement == "kg":
-            return str(int(self.dayweight)) + " kgs"
-        elif measurement == "lb":
+            return str("%.1f" % self.dayweight) + " kg"
+        elif measurement == "lbs":
             weight_lbs = self.dayweight * 2.20462
-            return  str(int(weight_lbs)) + " lbs"
+            return  str("%.1f" % weight_lbs) + " lbs"
 
     @classmethod
     def create_daydata(cls, user, calorie_plus, calorie_minus, dayweight, date):
         if user.weight_measurement_preference == "kg":
             dayweight = dayweight
-        elif user.weight_measurement_preference == "lb":
+        elif user.weight_measurement_preference == "lbs":
             dayweight = dayweight / 2.20462
         return cls.create(user=user,
             calorie_plus=calorie_plus,
@@ -175,15 +175,15 @@ def make_changes():
     )
 
 def populate_admin_data():
-    DATABASE.drop_tables([User, DayData])
-    DATABASE.create_tables([User, DayData], safe=True)
+    # I commented out these 2 lines because it doesnt make sense why they are there
+    #DATABASE.drop_tables([User, DayData])
+    #DATABASE.create_tables([User, DayData], safe=True)
     data = (
-        ('nikitakoba', 'nikitakoba93@gmail.com', 'password', 100, 175, 'male', 
+        ('admin', 'admin@test.com', 'password', 100, 175, 'male', 
         ((3000,3200, 105, "2019-03-01"),  (3100,3810, 104.8, "2019-03-03"), (2900,3150, 104.9, "2019-03-02"))
         ),
     )
     for username, email, password, weight, height, gender, days in data:
-        #username, email, password, weight, height, gender, days = userdata
         user = User.create_user(username, email, password, True)
         user.weight = weight
         user.height = height
@@ -231,7 +231,6 @@ def populate_test_data():
         )
     )
     for username, email, password, weight, height, gender, days in data:
-        #username, email, password, weight, height, gender, days = userdata
         user = User.create_user(username, email, password)
         user.weight = weight
         user.height = height

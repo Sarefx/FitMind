@@ -54,7 +54,7 @@ class MyStats(FlaskForm):
     birth_date = DateField('birth_date',validators=[Optional()])
     gender = RadioField('gender', choices=[("n/a","N/A"), ("male","Male"), ("female","Female"), ("other","Other")],
             validators=[Optional()])
-    weight_measurement_preference = RadioField('weight_measurement_preference', choices=[("kg","Kilograms"), ("lb","Pounds")],
+    weight_measurement_preference = RadioField('weight_measurement_preference', choices=[("kg","Kilograms"), ("lbs","Pounds")],
             validators=[Optional()])
     height_measurement_preference = RadioField('height_measurement_preference', choices=[("cm","Centimeters"), ("in","Inches")],
             validators=[Optional()])

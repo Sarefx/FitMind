@@ -12,6 +12,8 @@
             <p><b>Height:</b> {{ current_user.height_calculated() }}</p>
             <p><b>Gender:</b> {{ current_user.gender }}</p>
             <p><b>Age:</b> {{ current_user.age_calculated() }}</p>
+            <br>
+            <p><h3><b>Update your stats below.</b></h3></p>
 
             <form method="POST" action="" class="form" id="form5">
                 {{ form1.hidden_tag() }}
@@ -24,25 +26,20 @@
                 {{ render_field(form1.birth_date) }}
 
                 {% for subfield in form1.gender %}
-                <tr>
-                    <td>{{ subfield }}</td>
-                    <td>{{ subfield.label }}</td>
-                </tr>
+                    {{ subfield }}
+                    {{ subfield.label }}
                 {% endfor %}
-                <p><b>You can change your measurement prefernce.</b></p>
-                <br>
+                <p><h3><b>Your units of measurement are {{ current_user.weight_measurement_preference }} 
+                    and {{ current_user.height_measurement_preference }}. Change them below.</b></h3></p>
+                
                 {% for subfield in form1.weight_measurement_preference %}
-                <tr>
-                    <td>{{ subfield }}</td>
-                    <td>{{ subfield.label }}</td>
-                </tr>
+                    {{ subfield }}
+                    {{ subfield.label }}
                 {% endfor %}
                 <br>
                 {% for subfield in form1.height_measurement_preference %}
-                <tr>
-                    <td>{{ subfield }}</td>
-                    <td>{{ subfield.label }}</td>
-                </tr>
+                    {{ subfield }}
+                    {{ subfield.label }}
                 {% endfor %}
 
 

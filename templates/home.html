@@ -13,7 +13,7 @@
     <!--<p class="rText">It no longer will be a game of guesses, this will be a game of science and facts!</p>-->
     {% if not current_user.is_authenticated %}
     <p class="rText">Please register a profile to utilize the whole app.</p>
-    <a href="{{ url_for('register') }}"><button type="submit" class="submit" value="Submit">Register</button></a>
+        <button onclick="location.href = '/register';" type="submit" class="submit" value="Submit">Register</button>
     {% endif %}    
 
 </div>
@@ -45,35 +45,26 @@
 
         {{ render_field(form.weight) }}
         {% for subfield in form.weight_measurement_preference %}
-        <tr>
-            <td>{{ subfield }}</td>
-            <td>{{ subfield.label }}</td>
-        </tr>
+            {{ subfield }}
+            {{ subfield.label }}
         {% endfor %}
         {{ render_field(form.height) }}
         {% for subfield in form.height_measurement_preference %}
-        <tr>
-            <td>{{ subfield }}</td>
-            <td>{{ subfield.label }}</td>
-        </tr>
+            {{ subfield }}
+            {{ subfield.label }}
         {% endfor %}
         {{ render_field(form.age) }}
         {% for subfield in form.gender %}
-        <tr>
-            <td>{{ subfield }}</td>
-            <td>{{ subfield.label }}</td>
-        </tr>
+            {{ subfield }}
+            {{ subfield.label }}
         {% endfor %}
         <br>
         How much weight do you want to lose in a week?
         {{ render_field(form.bw_goal) }}
         {% for subfield in form.bw_goal_measurement_preference %}
-        <tr>
-            <td>{{ subfield }}</td>
-            <td>{{ subfield.label }}</td>
-        </tr>
+            {{ subfield }}
+            {{ subfield.label }}
         {% endfor %}
-
 
     </form>
     <button form="form12" type="submit" class="submit" value="Submit">Generate</button>
