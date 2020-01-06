@@ -1,6 +1,6 @@
 from flask import (Flask, render_template, redirect, url_for, 
     request, make_response, g, flash, session, abort)
-from flask_bcrypt import check_password_hash
+from flask_bcrypt import check_password_hash, generate_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required
 import forms
 import db
@@ -61,8 +61,6 @@ def home():
         
     return render_template('home.html', form=form, results=None)
 
-
-
 # ******************LOGIN*************************
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -81,7 +79,6 @@ def login():
             else:
                 flash("Your email or password doesnt match!", "error")
     return render_template('login.html', form=form)
-
 
 # **********************Dashboard****************************
 
@@ -114,7 +111,6 @@ def dashboard():
 
     for x in range(60):
         current_date = today_date - datetime.timedelta(days=1+x)
-
         #print("X is ",x," and current date is ",current_date)
 
         try:
@@ -144,25 +140,18 @@ def dashboard():
         except db.DoesNotExist:
             flash("Not enough data for the full analysis", "error")
             break
-    
 
     average_bodyweight_last_7_days = float("{0:.1f}".format(average_bodyweight_last_7_days / 7))
     average_bodyweight_previous_7_days = float("{0:.1f}".format(average_bodyweight_previous_7_days / 7))
     average_bodyweight_last_30_days = float("{0:.1f}".format(average_bodyweight_last_30_days / 30))
     average_bodyweight_previous_30_days = float("{0:.1f}".format(average_bodyweight_previous_30_days / 30))
 
-
-
     statistics_data = {'c_d_7': calorie_deficit_last_7_days, 'c_b_7': calorie_balance_last_7_days, 'a_b_7': average_bodyweight_last_7_days,
         'c_d_14': calorie_deficit_previous_7_days, 'c_b_14': calorie_balance_previous_7_days, 'a_b_14': average_bodyweight_previous_7_days,
         'c_d_30': calorie_deficit_last_30_days, 'c_b_30': calorie_balance_last_30_days, 'a_b_30': average_bodyweight_last_30_days,
-        'c_d_60': calorie_deficit_previous_30_days, 'c_b_60': calorie_balance_previous_30_days, 'a_b_60': average_bodyweight_previous_30_days,
-
-        }
+        'c_d_60': calorie_deficit_previous_30_days, 'c_b_60': calorie_balance_previous_30_days, 'a_b_60': average_bodyweight_previous_30_days,}
 
     return render_template('dashboard.html', statistics_data=statistics_data)
-
-
 
 # *********************LOGOUT****************************
 
@@ -234,11 +223,9 @@ def count_yesterday():
     date_yesterday = date_today - datetime.timedelta(days=1)
     
     try:
-
         while user.last_time_counted.strftime("%Y-%m-%d") <= date_yesterday.strftime("%Y-%m-%d"):
             
             #print("Trying to count date ",date_yesterday.strftime("%Y-%m-%d")," and the last day counted is ",user.last_time_counted.strftime("%Y-%m-%d"))
-
             try:
                 day_log = db.DayData.get(db.DayData.user == user and db.DayData.date == user.last_time_counted)
 
@@ -331,8 +318,23 @@ def mystats():
         return redirect(url_for('mystats'))
     return render_template('mystats.html', form1=form1)
 
+# *********************************CHANGE PASSWORD********************************
 
-
+@app.route('/changepassword', methods=('GET', 'POST'))
+@login_required
+def changepassword():
+    form = forms.ChangePasword()
+    user = db.User.get(db.User.id == session["user_id"])
+    if form.validate_on_submit():           
+        if check_password_hash(user.password, form.old_password.data):
+            new_password = form.password.data
+            user.password = generate_password_hash(new_password)
+            user.save()
+            flash("Password was changed!", "success")
+            return redirect(url_for('mystats'))
+        else:
+            flash("Your password doesnt match!", "error")
+    return render_template('changepassword.html', form=form)
 
 # **************************ERROR HANDLING************************
 

@@ -12,7 +12,7 @@ class User(UserMixin, Model):
     #user_id = AutoField()
     username = CharField(max_length=255,unique=True)
     email = CharField(max_length=255,unique=True)
-    password = CharField(max_length=255)
+    password = CharField(max_length=1000)
     weight = FloatField(default=0) # in kgs
     height = FloatField(default=0) # in cm
     gender = CharField(default='N/A', max_length=10) # male, female, other

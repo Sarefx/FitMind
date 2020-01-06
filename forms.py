@@ -86,7 +86,6 @@ class SetLastCountedDate(FlaskForm):
     last_counted_date = DateField('last_counted_date',validators=[Optional()])
 
 class GenerateGoals2(FlaskForm):
-
     weight = FloatField('Bodyweight',validators=[DataRequired()])
     weight_measurement_preference = RadioField('weight_measurement_preference', choices=[("lbs","lbs"), ("kg","kg")],validators=[InputRequired()])
     height = FloatField('Height',validators=[DataRequired()])
@@ -95,3 +94,11 @@ class GenerateGoals2(FlaskForm):
     gender = RadioField('gender', choices=[("male","Male"), ("female","Female"), ("other","Other")],validators=[InputRequired()])
     bw_goal = FloatField('',validators=[DataRequired()])
     bw_goal_measurement_preference = RadioField('bw_goal_measurement_preference', choices=[("lbs","lbs"), ("kg","kg")],validators=[InputRequired()])
+
+class ChangePasword(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired()])
+    password = PasswordField('New Password', validators=[
+            DataRequired(),
+            Length(min=2),
+            EqualTo('password2',message='Passwords must match')])
+    password2 = PasswordField('Confirm Password', validators=[DataRequired()])
