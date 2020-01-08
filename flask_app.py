@@ -42,23 +42,23 @@ def home():
     if form.validate_on_submit():
         weight = form.weight.data
         weight_measurement_preference = form.weight_measurement_preference.data
+
         if weight_measurement_preference == "lbs":
             weight = weight / 2.20462
         height = form.height.data
         height_measurement_preference = form.height_measurement_preference.data
+
         if height_measurement_preference == "inches":
             height = height / 0.393701
         age = form.age.data
         gender = form.gender.data
-
         bw_goal = form.bw_goal.data
         bw_goal_measurement_preference = form.bw_goal_measurement_preference.data
+
         if bw_goal_measurement_preference == "lbs":
             bw_goal = bw_goal / 2.20462
         results = fitmind.generate_goals2(weight,height,age,gender,bw_goal)
-
         return render_template('home.html', form=form, results=results)
-        
     return render_template('home.html', form=form, results=None)
 
 # ******************LOGIN*************************
@@ -66,6 +66,7 @@ def home():
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     form = forms.LoginForm()
+
     if form.validate_on_submit():
         try:
             user = db.User.get(db.User.email==form.email.data)
@@ -115,7 +116,6 @@ def dashboard():
 
         try:
             day_data = db.DayData.get(db.DayData.user == user and db.DayData.date == current_date)
-
             deficit = day_data.calorie_plus - day_data.calorie_minus
             calorie_balance = (day_data.calorie_minus - user.calorie_minus_goal) + (user.calorie_plus_goal - day_data.calorie_plus)
             bodyweight = day_data.dayweight
@@ -195,6 +195,7 @@ def mygoals():
             user.calorie_plus_goal = form1.calorie_plus_goal.data
         if form1.calorie_balance.data is not None:
             user.calorie_balance = form1.calorie_balance.data
+
     if form2.validate_on_submit():
         #print("The data in the field is ",form2.bw_goal.data)
         if form2.bw_goal.data is not None:
@@ -206,6 +207,7 @@ def mygoals():
         user.save()
         flash("Your data was set!", "success")
         return redirect(url_for('mygoals'))
+
     if form3.validate_on_submit():
         user = db.User.get(db.User.id == session["user_id"])
         user.last_time_counted = form3.last_counted_date.data
@@ -218,7 +220,6 @@ def mygoals():
 @login_required
 def count_yesterday():
     user = db.User.get(db.User.id == session["user_id"])
-
     date_today = datetime.datetime.now()
     date_yesterday = date_today - datetime.timedelta(days=1)
     
@@ -238,7 +239,6 @@ def count_yesterday():
             except db.DoesNotExist:
                 flash("There was a problem with a date", "error")
                 return redirect(url_for('dashboard'))
-
         flash("You've updated your balance", "success")
         return redirect(url_for('dashboard'))
     except db.DoesNotExist:
@@ -286,6 +286,24 @@ def remove_log(day_date):
     except db.DoesNotExist:
         abort(404)
 
+# ******************************ADMIN*******************************
+
+@app.route('/admin', methods=('GET', 'POST'))
+@login_required
+def admin():
+    users = db.User.select().order_by(db.User.joined_at.desc())
+    return render_template('admin.html', users=users)
+
+@app.route('/remove_user/<user_email>', methods=('GET', 'POST'))
+@login_required
+def remove_user(user_email):
+    try:
+        db.User.get(db.User.email == user_email).delete_instance()
+        flash("You've removed a user!", "success")
+        return redirect(url_for('admin'))
+    except db.DoesNotExist:
+        abort(404)
+
 # *********************************MY STATS********************************
 
 @app.route('/mystats', methods=('GET', 'POST'))
@@ -295,6 +313,7 @@ def mystats():
     user = db.User.get(db.User.id == session["user_id"])
 
     if form1.validate_on_submit():
+
         if form1.weight.data != None:
             user.set_weight(form1.weight.data)
         
@@ -312,7 +331,6 @@ def mystats():
 
         if form1.height_measurement_preference.data != "None":
             user.height_measurement_preference = form1.height_measurement_preference.data
-
         user.save()
         flash("Your data was updated!", "success")
         return redirect(url_for('mystats'))
@@ -325,7 +343,9 @@ def mystats():
 def changepassword():
     form = forms.ChangePasword()
     user = db.User.get(db.User.id == session["user_id"])
+
     if form.validate_on_submit():           
+
         if check_password_hash(user.password, form.old_password.data):
             new_password = form.password.data
             user.password = generate_password_hash(new_password)

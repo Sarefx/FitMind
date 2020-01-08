@@ -20,48 +20,37 @@ class RegistrationForm(FlaskForm):
             DataRequired(),
             Regexp(
                 r'^[a-zA-Z0-9_]+$',
-                message=("Username should be one word, letters, numbers, and underscores only,") 
-            ),
-            name_exists])
+                message=("Username should be one word, letters, numbers, and underscores only,")),name_exists])
     email = StringField(
         'Email',
         validators=[
             DataRequired(),
             Email(),
-            email_exists
-        ]
-    )
-    password = PasswordField(
-        'Password',
-        validators=[
+            email_exists])
+    password = PasswordField('Password',validators=[
             DataRequired(),
             Length(min=2),
-            EqualTo('password2',message='Passwords must match')
-        ]
-    )
-    password2 = PasswordField(
-        'Confirm Password',
-        validators=[DataRequired()]
-    )
+            EqualTo('password2',message='Passwords must match')])
+    password2 = PasswordField('Confirm Password',validators=[DataRequired()])
 
 class LoginForm(FlaskForm):
     email = StringField('Email',validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password',validators=[DataRequired()])
 
 class MyStats(FlaskForm):
     weight = FloatField('Bodyweight',validators=[Optional()])
     height = FloatField('Height',validators=[Optional()])
     birth_date = DateField('birth_date',validators=[Optional()])
-    gender = RadioField('gender', choices=[("n/a","N/A"), ("male","Male"), ("female","Female"), ("other","Other")],
+    gender = RadioField('gender', choices=[("n/a","N/A"),("male","Male"),("female","Female"),("other","Other")],
             validators=[Optional()])
-    weight_measurement_preference = RadioField('weight_measurement_preference', choices=[("kg","Kilograms"), ("lbs","Pounds")],
+    weight_measurement_preference = RadioField('weight_measurement_preference',choices=[("kg","Kilograms"),("lbs","Pounds")],
             validators=[Optional()])
-    height_measurement_preference = RadioField('height_measurement_preference', choices=[("cm","Centimeters"), ("in","Inches")],
+    height_measurement_preference = RadioField('height_measurement_preference',choices=[("cm","Centimeters"),("in","Inches")],
             validators=[Optional()])
 
 class AddLog(FlaskForm):
     date = DateField('date',validators=[DataRequired()])
-    cal_plus = IntegerField('Calorie consumed',validators=[InputRequired()])
+    cal_plus = IntegerField('Calories consumed',validators=[InputRequired()])
     cal_minus = IntegerField('Calories burnt',validators=[InputRequired()])
     day_weight = FloatField('Bodyweight',validators=[InputRequired()])    
 
@@ -96,9 +85,9 @@ class GenerateGoals2(FlaskForm):
     bw_goal_measurement_preference = RadioField('bw_goal_measurement_preference', choices=[("lbs","lbs"), ("kg","kg")],validators=[InputRequired()])
 
 class ChangePasword(FlaskForm):
-    old_password = PasswordField('Old Password', validators=[DataRequired()])
-    password = PasswordField('New Password', validators=[
+    old_password = PasswordField('Old Password',validators=[DataRequired()])
+    password = PasswordField('New Password',validators=[
             DataRequired(),
             Length(min=2),
             EqualTo('password2',message='Passwords must match')])
-    password2 = PasswordField('Confirm Password', validators=[DataRequired()])
+    password2 = PasswordField('Confirm Password',validators=[DataRequired()])

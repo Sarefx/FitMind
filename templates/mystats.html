@@ -3,7 +3,6 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
     <div class="normalPanel">
         <h1>Your stats</h1>
             <p><b>Username:</b> {{ current_user.username }}</p>
@@ -14,14 +13,12 @@
             <p><b>Age:</b> {{ current_user.age_calculated() }}</p>
             <br>
             <p><h3><b>Update your stats below.</b></h3></p>
-
             <form method="POST" action="" class="form" id="form5">
                 {{ form1.hidden_tag() }}
                 <p>Enter weight in {{ current_user.weight_measurement_preference }}</p>
                 {{ render_field(form1.weight) }}
                 <p>Enter height in {{ current_user.height_measurement_preference }}</p>
                 {{ render_field(form1.height) }}
-
                 <p>Enter your birth date</p>
                 {{ render_field(form1.birth_date) }}
 
@@ -41,8 +38,6 @@
                     {{ subfield }}
                     {{ subfield.label }}
                 {% endfor %}
-
-
             </form>
             <button form="form5" type="submit" class="submit" value="Submit">Update</button>
             <button onclick="location.href = '/changepassword';" type="submit" class="submit" value="Submit">Change Password</button>

@@ -31,6 +31,9 @@
                         <a href="{{ url_for('mygoals') }}">My Goals</a>
                         <a href="{{ url_for('mylogs') }}">My Logs</a>
                         <a href="{{ url_for('mystats') }}">My Stats</a>
+                            {% if current_user.is_admin %}   
+                            <a href="{{ url_for('admin') }}">Admin</a>
+                            {% endif %}
                         <a href="{{ url_for('logout') }}">Log Out</a>
                         {% endif %}
                     </div>
