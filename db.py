@@ -4,8 +4,7 @@ from peewee import *
 from flask_bcrypt import generate_password_hash,check_password_hash
 from playhouse.migrate import *
 
-DATABASE = SqliteDatabase('users.db')
-#DATABASE = SqliteDatabase('test_users.db')
+DATABASE = SqliteDatabase('../users.db')
 
 class User(UserMixin, Model):
     #user_id = AutoField()
@@ -225,11 +224,10 @@ def populate_test_data():
 
 def view_all_data():
     users = User.select()
-
+    
     for user in users:
         print("Username: ",user.username," Email: ",user.email," Password: ",user.password," Weight: ",user.weight," Height: ",user.height)
         daydatas = DayData.select().where(DayData.user == user)
-
         for daydata in daydatas:
             print("Calories plus: ",daydata.calorie_plus," Calories minus: ",daydata.calorie_minus," Weight: ",daydata.dayweight ," Date: ",daydata.date)
 
