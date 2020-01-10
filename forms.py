@@ -87,7 +87,7 @@ class GenerateGoals2(FlaskForm):
 class ChangePasword(FlaskForm):
     old_password = PasswordField('Old Password',validators=[DataRequired()])
     password = PasswordField('New Password',validators=[
-            DataRequired(),
-            Length(min=2),
-            EqualTo('password2',message='Passwords must match')])
+        DataRequired(),
+        Length(min=2),
+        EqualTo('password2',message='Passwords must match')])
     password2 = PasswordField('Confirm Password',validators=[DataRequired()])

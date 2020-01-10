@@ -14,27 +14,27 @@
             <br>
             <p><h3><b>Update your stats below.</b></h3></p>
             <form method="POST" action="" class="form" id="form5">
-                {{ form1.hidden_tag() }}
+                {{ form.hidden_tag() }}
                 <p>Enter weight in {{ current_user.weight_measurement_preference }}</p>
-                {{ render_field(form1.weight) }}
+                {{ render_field(form.weight) }}
                 <p>Enter height in {{ current_user.height_measurement_preference }}</p>
-                {{ render_field(form1.height) }}
+                {{ render_field(form.height) }}
                 <p>Enter your birth date</p>
-                {{ render_field(form1.birth_date) }}
+                {{ render_field(form.birth_date) }}
 
-                {% for subfield in form1.gender %}
+                {% for subfield in form.gender %}
                     {{ subfield }}
                     {{ subfield.label }}
                 {% endfor %}
                 <p><h3><b>Your units of measurement are {{ current_user.weight_measurement_preference }} 
                     and {{ current_user.height_measurement_preference }}. Change them below.</b></h3></p>
                 
-                {% for subfield in form1.weight_measurement_preference %}
+                {% for subfield in form.weight_measurement_preference %}
                     {{ subfield }}
                     {{ subfield.label }}
                 {% endfor %}
                 <br>
-                {% for subfield in form1.height_measurement_preference %}
+                {% for subfield in form.height_measurement_preference %}
                     {{ subfield }}
                     {{ subfield.label }}
                 {% endfor %}
@@ -43,4 +43,5 @@
             <button onclick="location.href = '/changepassword';" type="submit" class="submit" value="Submit">Change Password</button>
             <br>
     </div>
+
 {% endblock %}

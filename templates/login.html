@@ -2,6 +2,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
     <div class="normalPanel">
         <h1>Please enter your credentials</h1>
         <form method="POST" action="" class="form" id="form">
@@ -13,4 +14,5 @@
 
         <a href="{{ url_for('register') }}"><button type="submit" class="submit" value="Submit">Register</button></a>
     </div>
+
 {% endblock %}

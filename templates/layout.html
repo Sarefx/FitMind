@@ -3,14 +3,12 @@
     <head>
         <title>FitMind</title>
         <link rel="stylesheet" href="/static/css/main.css">
-
         <meta charset="UTF-8">
         <meta name="description" content="Fitness tracker app"> 
         <meta name="keywords" content="fitness,weightloss,excercise,calories">
         <meta name="author" content="Nikita Koba">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="180">
-
     </head>
     <body>
         <div class="normalPage wrapper">
@@ -23,6 +21,7 @@
                     </div>
                     <div class="nav-links">
                         <a href="{{ url_for('home') }}">Home</a>
+                        <a href="{{ url_for('blog') }}">Blog</a>
                         {% if not current_user.is_authenticated %}
                         <a href="{{ url_for('login') }}">Log In</a>
                         {% endif %}
@@ -45,9 +44,12 @@
                 <div class="notification {{ category }}">{{ message }}</div>
             {% endfor %}
             {% endif %}
-            {% endwith %}                       
+            {% endwith %}    
+
         {% block content %}
+
         {% endblock %}
+        
     <div class="push"></div>    
     </div>
     <footer class="footer">

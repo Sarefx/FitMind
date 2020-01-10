@@ -33,7 +33,7 @@ def after_request(response):
     g.db.close()
     return response
 
-# ******************HOME*************************
+# ***************************HOME***************************
 
 @app.route('/', methods=('GET', 'POST'))
 def home():
@@ -61,7 +61,7 @@ def home():
         return render_template('home.html', form=form, results=results)
     return render_template('home.html', form=form, results=None)
 
-# ******************LOGIN*************************
+# ***************************LOGIN***************************
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
@@ -81,7 +81,7 @@ def login():
                 flash("Your email or password doesnt match!", "error")
     return render_template('login.html', form=form)
 
-# **********************Dashboard****************************
+# ***************************Dashboard***************************
 
 @app.route('/dashboard', methods=('GET', 'POST'))
 @login_required
@@ -153,7 +153,7 @@ def dashboard():
 
     return render_template('dashboard.html', statistics_data=statistics_data)
 
-# *********************LOGOUT****************************
+# ***************************LOGOUT***************************
 
 @app.route('/logout')
 @login_required
@@ -162,7 +162,7 @@ def logout():
     flash("You've been logged out!", "success")
     return redirect(url_for('home'))
 
-# ***************************REGISTER**************************
+# ***************************REGISTER***************************
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
@@ -245,7 +245,7 @@ def count_yesterday():
         flash("There is no log from yesterday", "error")
         return redirect(url_for('dashboard'))
 
-# ******************************MY LOGS*******************************
+# ***************************MY LOGS***************************
 
 @app.route('/mylogs', methods=('GET', 'POST'))
 @login_required
@@ -286,7 +286,7 @@ def remove_log(day_date):
     except db.DoesNotExist:
         abort(404)
 
-# ******************************ADMIN*******************************
+# ***************************ADMIN***************************
 
 @app.route('/admin', methods=('GET', 'POST'))
 @login_required
@@ -304,39 +304,51 @@ def remove_user(user_email):
     except db.DoesNotExist:
         abort(404)
 
-# *********************************MY STATS********************************
+@app.route('/add_blog', methods=('GET', 'POST'))
+@login_required
+def add_blog():
+    return render_template('add_blog.html')
+
+# ***************************MY STATS***************************
 
 @app.route('/mystats', methods=('GET', 'POST'))
 @login_required
 def mystats():
-    form1 = forms.MyStats()
+    form = forms.MyStats()
     user = db.User.get(db.User.id == session["user_id"])
 
-    if form1.validate_on_submit():
+    if form.validate_on_submit():
 
-        if form1.weight.data != None:
-            user.set_weight(form1.weight.data)
+        if form.weight.data != None:
+            user.set_weight(form.weight.data)
         
-        if form1.height.data != None:
-            user.set_height(form1.height.data)
+        if form.height.data != None:
+            user.set_height(form.height.data)
 
-        if form1.birth_date.data != None:
-            user.birth_date = form1.birth_date.data
+        if form.birth_date.data != None:
+            user.birth_date = form.birth_date.data
 
-        if form1.gender.data != "None":
-            user.gender = form1.gender.data
+        if form.gender.data != "None":
+            user.gender = form.gender.data
 
-        if form1.weight_measurement_preference.data != "None":
-            user.weight_measurement_preference = form1.weight_measurement_preference.data
+        if form.weight_measurement_preference.data != "None":
+            user.weight_measurement_preference = form.weight_measurement_preference.data
 
-        if form1.height_measurement_preference.data != "None":
-            user.height_measurement_preference = form1.height_measurement_preference.data
+        if form.height_measurement_preference.data != "None":
+            user.height_measurement_preference = form.height_measurement_preference.data
         user.save()
         flash("Your data was updated!", "success")
         return redirect(url_for('mystats'))
-    return render_template('mystats.html', form1=form1)
+    return render_template('mystats.html', form=form)
 
-# *********************************CHANGE PASSWORD********************************
+# ***************************BLOG***************************
+
+@app.route('/blog', methods=('GET', 'POST'))
+def blog():
+    # I will have more code here
+    return render_template('blog.html')
+
+# ***************************CHANGE PASSWORD***************************
 
 @app.route('/changepassword', methods=('GET', 'POST'))
 @login_required
@@ -345,7 +357,6 @@ def changepassword():
     user = db.User.get(db.User.id == session["user_id"])
 
     if form.validate_on_submit():           
-
         if check_password_hash(user.password, form.old_password.data):
             new_password = form.password.data
             user.password = generate_password_hash(new_password)
@@ -356,12 +367,12 @@ def changepassword():
             flash("Your password doesnt match!", "error")
     return render_template('changepassword.html', form=form)
 
-# **************************ERROR HANDLING************************
+# ***************************ERROR HANDLING***************************
 
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    #app.run(debug=True, port=8000, host='0.0.0.0')
-    app.run()
+    app.run(debug=True, port=8000, host='0.0.0.0')
+    #app.run()

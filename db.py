@@ -1,24 +1,23 @@
 import datetime
 from flask_login import UserMixin
 from peewee import *
-from flask_bcrypt import generate_password_hash,check_password_hash
+from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.migrate import *
 
 DATABASE = SqliteDatabase('../users.db')
 
 class User(UserMixin, Model):
-    #user_id = AutoField()
-    username = CharField(max_length=255,unique=True)
-    email = CharField(max_length=255,unique=True)
+    username = CharField(max_length=255, unique=True)
+    email = CharField(max_length=255, unique=True)
     password = CharField(max_length=1000)
-    weight = FloatField(default=0) # in kgs
-    height = FloatField(default=0) # in cm
-    gender = CharField(default='N/A', max_length=10) # male, female, other
+    weight = FloatField(default=0)  # in kgs
+    height = FloatField(default=0)  # in cm
+    gender = CharField(default='N/A', max_length=10)  # male, female, other
 
     birth_date = DateField(default=datetime.date.today)
 
-    weight_measurement_preference =  CharField(default='kg', max_length=10) # other choice is lbs
-    height_measurement_preference =  CharField(default='cm', max_length=10) # other choice is in
+    weight_measurement_preference =  CharField(default='kg', max_length=10)  # other choice is lbs
+    height_measurement_preference =  CharField(default='cm', max_length=10)  # other choice is in
     
     calorie_plus_goal = IntegerField(default=0)
     calorie_minus_goal = IntegerField(default=0)
@@ -159,9 +158,28 @@ class DayData(Model):
         database = DATABASE
         order_by = ('-date',)
 
+
+class Blog(Model):
+    title = CharField(max_length=50)
+    date = DateField(default=datetime.date.now)
+    text = CharField(max_length=10000)
+    author = CharField(max_length=50)
+
+    @classmethod
+    def create_blog(cls, title, date, text, author):
+
+        return cls.create(title=title,
+            date=date,
+            text=text,
+            author=author)
+
+    class Meta:
+        database = DATABASE
+        order_by = ('-date',)
+
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([User, DayData], safe=True)
+    DATABASE.create_tables([User, DayData, Blog], safe=True)
     DATABASE.close()
 
 # make_changes function is to add or remove columns/tables
@@ -169,7 +187,7 @@ def make_changes():
     my_db = SqliteDatabase('users.db')
     migrator = SqliteMigrator(my_db)
     deficit_analysis_field = IntegerField(default=33)
-    migrate(migrator.add_column('DayData', 'deficit_analysis', deficit_analysis_field),)
+    migrate(migrator.add_column('DayData', 'deficit_analysis', deficit_analysis_field),)  # this is old migration, need to change for the future
 
 def populate_admin_data():
     # I commented out these 2 lines because it doesnt make sense why they are there
@@ -185,6 +203,7 @@ def populate_admin_data():
         user.height = height
         user.gender = gender
         user.save()
+
         for dayP, dayM, dayweight, date in days:
             DayData.create(user=user, calorie_plus=dayP, calorie_minus=dayM, dayweight=dayweight, date=date)
 

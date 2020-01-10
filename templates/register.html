@@ -2,6 +2,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
     <div class="normalPanel">
         <h1>Please enter your info to register</h1>
         <form method="POST" action="" class="form" id="form">
@@ -11,6 +12,7 @@
           {% endfor %}
         </form>
         <button form="form" type="submit" class="submit" value="Submit">Complete</button>
-        <a href="{{ url_for('login') }}"><button type="submit" class="submit" value="Submit">Back</button></a>
+        <button onclick="location.href = '/login';" type="submit" class="submit" value="Submit">Back</button>
     </div>
+
 {% endblock %}
