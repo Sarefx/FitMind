@@ -160,16 +160,15 @@ class DayData(Model):
 
 
 class Blog(Model):
-    title = CharField(max_length=50)
-    date = DateField(default=datetime.date.now)
+    id = AutoField()
+    title = CharField(max_length=50, unique=True)
+    date = DateField(default=datetime.datetime.now)
     text = CharField(max_length=10000)
     author = CharField(max_length=50)
 
     @classmethod
-    def create_blog(cls, title, date, text, author):
-
+    def create_blog(cls, title, text, author):
         return cls.create(title=title,
-            date=date,
             text=text,
             author=author)
 
@@ -186,8 +185,9 @@ def initialize():
 def make_changes():
     my_db = SqliteDatabase('users.db')
     migrator = SqliteMigrator(my_db)
-    deficit_analysis_field = IntegerField(default=33)
-    migrate(migrator.add_column('DayData', 'deficit_analysis', deficit_analysis_field),)  # this is old migration, need to change for the future
+    # deficit_analysis_field = IntegerField(default=33)
+    # migrate(migrator.add_column('DayData', 'deficit_analysis', deficit_analysis_field),)  # this is old migration, need to change for the future
+    DATABASE.create_tables([Blog], safe=True)
 
 def populate_admin_data():
     # I commented out these 2 lines because it doesnt make sense why they are there
@@ -254,6 +254,6 @@ if __name__ == '__main__':
     #initialize()
     #populate_admin_data()
     #populate_test_data()
-    #make_changes()
+    make_changes()
     #view_all_data()
     pass

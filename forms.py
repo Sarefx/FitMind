@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, IntegerField, FloatField, RadioField
+from wtforms import StringField, PasswordField, IntegerField, FloatField, RadioField, TextAreaField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Regexp, ValidationError, Email, Length, EqualTo, NumberRange, InputRequired, Optional
 
@@ -91,3 +91,8 @@ class ChangePasword(FlaskForm):
         Length(min=2),
         EqualTo('password2',message='Passwords must match')])
     password2 = PasswordField('Confirm Password',validators=[DataRequired()])
+
+class AddBlog(FlaskForm):
+    title = StringField('Title',validators=[DataRequired(),])
+    text = TextAreaField('Text',validators=[DataRequired(),])
+    author = StringField('Author',validators=[DataRequired(),])

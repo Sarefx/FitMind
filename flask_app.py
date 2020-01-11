@@ -307,7 +307,27 @@ def remove_user(user_email):
 @app.route('/add_blog', methods=('GET', 'POST'))
 @login_required
 def add_blog():
-    return render_template('add_blog.html')
+    form = forms.AddBlog()
+    blogs = db.Blog.select()
+    if form.validate_on_submit():
+        title = form.title.data
+        text = form.text.data
+        author = form.author.data
+        db.Blog.create_blog(title=title, text=text, author=author)
+
+        flash("Blog was added!", "success")
+        return redirect(url_for('add_blog'))
+    return render_template('add_blog.html', form=form, blogs=blogs)
+
+@app.route('/delete_blog/<blog_id>', methods=('GET', 'POST'))
+@login_required
+def delete_blog(blog_id):
+    try:
+        db.Blog.get(db.Blog.id == blog_id).delete_instance()
+        flash("You've deleted a blog!", "success")
+        return redirect(url_for('add_blog'))
+    except db.DoesNotExist:
+        abort(404)
 
 # ***************************MY STATS***************************
 
@@ -345,8 +365,8 @@ def mystats():
 
 @app.route('/blog', methods=('GET', 'POST'))
 def blog():
-    # I will have more code here
-    return render_template('blog.html')
+    blogs = db.Blog.select()
+    return render_template('blog.html', blogs=blogs)
 
 # ***************************CHANGE PASSWORD***************************
 

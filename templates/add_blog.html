@@ -1,0 +1,37 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="normalPanel">
+    <form method="POST" action="" class="form" id="form">
+        {{ form.hidden_tag() }}
+        {% for field in form %}
+            {{ render_field(field) }}
+        {% endfor %}
+        </form>
+    <button form="form" type="submit" class="submit" value="Submit">Add Blog</button>
+    <button onclick="location.href = '/admin';" type="submit" class="submit" value="Submit">Back</button>
+</div>
+
+<div class="normalPanel">
+    <h1>Here are all blogs:</h1>
+    <table style="width:100%">
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Author</th>
+            <th></th>
+        </tr>
+        {% for blog in blogs %}
+        <tr>
+            <td>{{ blog.title }}</td> 
+            <td>{{ blog.date }}</td>
+            <td>{{ blog.author }}</td>  
+            <td><a href="{{ url_for('delete_blog', blog_id=blog.id) }}" class="small">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
