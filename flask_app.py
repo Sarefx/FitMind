@@ -365,7 +365,7 @@ def mystats():
 
 @app.route('/blog', methods=('GET', 'POST'))
 def blog():
-    blogs = db.Blog.select()
+    blogs = db.Blog.select().order_by(db.Blog.date.desc())
     return render_template('blog.html', blogs=blogs)
 
 # ***************************CHANGE PASSWORD***************************
@@ -394,5 +394,5 @@ def not_found(error):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000, host='0.0.0.0')
-    #app.run()
+    #app.run(debug=True, port=8000, host='0.0.0.0')
+    app.run()
