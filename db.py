@@ -17,7 +17,7 @@ class User(UserMixin, Model):
     birth_date = DateField(default=datetime.date.today)
 
     weight_measurement_preference =  CharField(default='kg', max_length=10)  # other choice is lbs
-    height_measurement_preference =  CharField(default='cm', max_length=10)  # other choice is in
+    height_measurement_preference =  CharField(default='cm', max_length=10)  # other choice is inches
     
     calorie_plus_goal = IntegerField(default=0)
     calorie_minus_goal = IntegerField(default=0)
@@ -40,7 +40,7 @@ class User(UserMixin, Model):
     def set_height(self, height):
         if self.height_measurement_preference == "cm":
             height = height
-        elif self.height_measurement_preference == "in":
+        elif self.height_measurement_preference == "inches":
             height = height / 0.393701
         self.height = height
         
@@ -54,7 +54,7 @@ class User(UserMixin, Model):
     def height_calculated(self):
         if self.height_measurement_preference == "cm":
             return str(int(self.height)) + " cm"
-        elif self.height_measurement_preference == "in":
+        elif self.height_measurement_preference == "inches":
             height_inches = int(self.height * 0.393701)
             height_feet = int(height_inches / 12)
             height_inches = int(height_inches % 12)
@@ -254,6 +254,6 @@ if __name__ == '__main__':
     #initialize()
     #populate_admin_data()
     #populate_test_data()
-    make_changes()
+    #make_changes()
     #view_all_data()
     pass

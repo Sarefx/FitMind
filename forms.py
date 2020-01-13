@@ -45,7 +45,7 @@ class MyStats(FlaskForm):
             validators=[Optional()])
     weight_measurement_preference = RadioField('weight_measurement_preference',choices=[("kg","Kilograms"),("lbs","Pounds")],
             validators=[Optional()])
-    height_measurement_preference = RadioField('height_measurement_preference',choices=[("cm","Centimeters"),("in","Inches")],
+    height_measurement_preference = RadioField('height_measurement_preference',choices=[("cm","Centimeters"),("inches","Inches")],
             validators=[Optional()])
 
 class AddLog(FlaskForm):

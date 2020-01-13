@@ -15,11 +15,11 @@
             <p><h3><b>Update your stats below.</b></h3></p>
             <form method="POST" action="" class="form" id="form5">
                 {{ form.hidden_tag() }}
-                <p>Enter weight in {{ current_user.weight_measurement_preference }}</p>
-                {{ render_field(form.weight) }}
-                <p>Enter height in {{ current_user.height_measurement_preference }}</p>
-                {{ render_field(form.height) }}
-                <p>Enter your birth date</p>
+                {{ render_field(form.weight) }} {{ current_user.weight_measurement_preference }}
+                {{ render_field(form.height) }} {{ current_user.height_measurement_preference }}
+                <br>
+                <br>
+                Birthdate
                 {{ render_field(form.birth_date) }}
 
                 {% for subfield in form.gender %}

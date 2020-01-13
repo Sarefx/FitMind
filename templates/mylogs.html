@@ -5,7 +5,6 @@
 
 <div class="normalPanel">
     <h1>Add a new log</h1>
-    <p>Enter day weight in {{ current_user.weight_measurement_preference }}</p>
     <form method="POST" action="" class="form" id="form">
         {{ form.hidden_tag() }}
         {{ render_field(form.date) }} 
@@ -13,14 +12,13 @@
         {{ render_field(form.cal_plus) }}
         {{ render_field(form.cal_minus) }}
         
-        {{ render_field(form.day_weight) }}
+        {{ render_field(form.day_weight) }} in {{ current_user.weight_measurement_preference }}
         
     </form>
     <button form="form" type="submit" class="submit" value="Submit">Add</button>
 </div>
 
 <div class="normalPanel">
-    <h1>Here are your logs</h1>
     <table style="width:100%">
         <tr>
             <th>Date</th>

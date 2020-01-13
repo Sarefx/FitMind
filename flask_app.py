@@ -255,8 +255,9 @@ def mylogs():
     day_datas = db.DayData.select().where(db.DayData.user == user).order_by(db.DayData.date.desc())
 
     if form.validate_on_submit():
-        #print("The date is being added is ", form.date.data)
-        query = db.DayData.select().where(db.DayData.user == user and db.DayData.date == form.date.data)
+        print("Adding log: date is",form.date.data,"user is",user.username)
+        user_query = db.DayData.select().where(db.DayData.user == user)
+        query =  user_query.select().where(db.DayData.date == form.date.data)
         if query.exists():
             flash("The date you selected already exists", "error")
         else:
@@ -266,6 +267,7 @@ def mylogs():
             date = form.date.data
 
             db.DayData.create_daydata(user=user, calorie_plus=cal_plus, calorie_minus=cal_minus, dayweight=day_weight, date=date)
+
             user.set_weight(day_weight)
             user.save()
             flash("Your new day log was added!", "success")
