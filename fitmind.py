@@ -255,16 +255,10 @@ def process_data(weight_days, calorie_days, start_day, week_goal, user_id):
     results.update( {'week_goal' : week_goal, 'bw_change' : bw_change, 'bw_change_per_day' : bw_change_per_day, 'bw_present' : bw_present,
         'calorie_plus_avg' : calorie_plus_avg, 'calorie_minus_avg' : calorie_minus_avg}
         )
-
     print(results)
     return results
 
-
-
-
-def generate_goals(bw_goal, user_id):
-
-    user = db.User.get(db.User.id == user_id)
+def generate_goals(bw_goal, user):
     user_weight = user.weight
     user_height = user.height
     user_gender = user.gender

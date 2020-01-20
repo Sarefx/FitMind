@@ -6,6 +6,7 @@ import forms
 import db
 import datetime
 import fitmind
+import random
 
 app = Flask(__name__)
 app.secret_key = "fmasdmvs,mv.q;)(*&^%$wpoeuxmcmvruei8eoksmdm1245tw1%!@#$*%vsmxcv"
@@ -183,36 +184,43 @@ def register():
 @app.route('/mygoals', methods=('GET', 'POST'))
 @login_required
 def mygoals():
-    form1 = forms.SetGoals()
-    form2 = forms.GenerateGoals()
-    form3 = forms.SetLastCountedDate()
+    form1 = forms.SetLastCountedDate()
+    form2 = forms.SetGoals()
+    form3 = forms.GenerateGoals()
+    
     user = db.User.get(db.User.id == session["user_id"])
 
-    if form1.validate_on_submit():
-        if form1.calorie_minus_goal.data is not None:
-            user.calorie_minus_goal = form1.calorie_minus_goal.data
-        if form1.calorie_plus_goal.data is not None:
-            user.calorie_plus_goal = form1.calorie_plus_goal.data
-        if form1.calorie_balance.data is not None:
-            user.calorie_balance = form1.calorie_balance.data
+    if form1.validate_on_submit() and form1.last_counted_date.data:  # I a second condition to check if there is data to avoid an error
+        user.last_time_counted = form1.last_counted_date.data
+        #print("user is ",user.username," and last counted date is",form1.last_counted_date.data)
+        user.save()
+        flash("The last counted date was set!", "success")
+        return redirect(url_for('mygoals'))
 
-    if form2.validate_on_submit():
-        #print("The data in the field is ",form2.bw_goal.data)
-        if form2.bw_goal.data is not None:
-            bw_goal = form2.bw_goal.data
-            results = fitmind.generate_goals(bw_goal, session["user_id"])
+    if form2.validate_on_submit() and ((form2.calorie_minus_goal.data is not None) or (form2.calorie_plus_goal.data is not None) or (form2.calorie_balance.data is not None)):
+        if form2.calorie_minus_goal.data is not None:
+            user.calorie_minus_goal = form2.calorie_minus_goal.data
+        if form2.calorie_plus_goal.data is not None:
+            user.calorie_plus_goal = form2.calorie_plus_goal.data
+        if form2.calorie_balance.data is not None:
+            user.calorie_balance = form2.calorie_balance.data
+        user.save()
+        flash("Your goals were set!", "success")
+        return redirect(url_for('mygoals'))
+
+    if form3.validate_on_submit() and form3.bw_goal.data:
+        #print("birth date is",user.birth_date)
+        if user.height > 1:
+            #print("The data in the field is ",form3.bw_goal.data)
+            bw_goal = form3.bw_goal.data
+            results = fitmind.generate_goals(bw_goal, user)
             user.calorie_minus_goal = results.get('cal_minus_goal')
             user.calorie_plus_goal = results.get('cal_plus_goal')
             #print("Goals are ",results.get('cal_minus_goal')," and ",results.get('cal_plus_goal'))
-        user.save()
-        flash("Your data was set!", "success")
-        return redirect(url_for('mygoals'))
-
-    if form3.validate_on_submit():
-        user = db.User.get(db.User.id == session["user_id"])
-        user.last_time_counted = form3.last_counted_date.data
-        user.save()
-        flash("The last counted date was set!", "success")
+            user.save()
+            flash("Your goals were generated!", "success")
+        else:
+            flash("Set your bodyweight, height and age", "error")
         return redirect(url_for('mygoals'))
     return render_template('mygoals.html', form1=form1, form2=form2, form3=form3)
 
@@ -238,33 +246,34 @@ def count_yesterday():
                 user.save() 
             except db.DoesNotExist:
                 flash("There was a problem with a date", "error")
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('mygoals'))
         flash("You've updated your balance", "success")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('mygoals'))
     except db.DoesNotExist:
         flash("There is no log from yesterday", "error")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('mygoals'))
 
 # ***************************MY LOGS***************************
 
 @app.route('/mylogs', methods=('GET', 'POST'))
 @login_required
 def mylogs():
-    form = forms.AddLog()
+    form_add_log = forms.AddLog()
+    form_add_many_logs = forms.AddManyLogs()
     user = db.User.get(db.User.id == session["user_id"])
     day_datas = db.DayData.select().where(db.DayData.user == user).order_by(db.DayData.date.desc())
 
-    if form.validate_on_submit():
-        print("Adding log: date is",form.date.data,"user is",user.username)
+    if form_add_log.validate_on_submit() and form_add_log.cal_plus.data is not None:
+        #print("Adding log: date is",form_add_log.date.data,"user is",user.username)
         user_query = db.DayData.select().where(db.DayData.user == user)
-        query =  user_query.select().where(db.DayData.date == form.date.data)
+        query =  user_query.select().where(db.DayData.date == form_add_log.date.data)
         if query.exists():
-            flash("The date you selected already exists", "error")
+            flash("The selected date already exists", "error")
         else:
-            cal_plus = form.cal_plus.data
-            cal_minus = form.cal_minus.data
-            day_weight = form.day_weight.data
-            date = form.date.data
+            cal_plus = form_add_log.cal_plus.data
+            cal_minus = form_add_log.cal_minus.data
+            day_weight = form_add_log.day_weight.data
+            date = form_add_log.date.data
 
             db.DayData.create_daydata(user=user, calorie_plus=cal_plus, calorie_minus=cal_minus, dayweight=day_weight, date=date)
 
@@ -272,17 +281,52 @@ def mylogs():
             user.save()
             flash("Your new day log was added!", "success")
             return redirect(url_for('mylogs'))
+    
+    if form_add_many_logs.validate_on_submit() and form_add_many_logs.cal_plus_min.data is not None:
+        user_query = db.DayData.select().where(db.DayData.user == user)
 
-    form.date.data = datetime.datetime.now() - datetime.timedelta(days=1)
-    return render_template('mylogs.html', form=form, day_datas=day_datas)
+        start_date = form_add_many_logs.start_date.data
+        end_date = form_add_many_logs.end_date.data
+        cal_plus_min = form_add_many_logs.cal_plus_min.data
+        cal_plus_max = form_add_many_logs.cal_plus_max.data
+        cal_minus_min = form_add_many_logs.cal_minus_min.data
+        cal_minus_max = form_add_many_logs.cal_minus_max.data
+        start_day_weight = form_add_many_logs.start_day_weight.data
+        end_day_weight = form_add_many_logs.end_day_weight.data
+        
+        days = (end_date - start_date).days + 1  # adding 1 to include both days
+        day_weight_increment = (end_day_weight - start_day_weight) / days
+
+        day_weight = start_day_weight
+
+        #print("The amount of days is",days)
+        for day in range(days):
+            #print("day is",day)
+            date = start_date + datetime.timedelta(days=(day))
+            #print("date is ",date)
+            cal_plus = random.randrange(cal_plus_min, cal_plus_max)
+            cal_minus = random.randrange(cal_minus_min, cal_minus_max)
+            day_weight = day_weight + day_weight_increment
+            temp_day_weight = day_weight + (random.randrange(-4, 4) / 10)
+
+            query =  user_query.select().where(db.DayData.date == date)
+            if query.exists():
+                pass
+            else:
+                db.DayData.create_daydata(user=user, calorie_plus=cal_plus, calorie_minus=cal_minus, dayweight=temp_day_weight, date=date)
+        flash("Random logs are added", "success")
+        return redirect(url_for('mylogs'))
+    form_add_log.date.data = datetime.datetime.now() - datetime.timedelta(days=1)
+    return render_template('mylogs.html', form_add_log=form_add_log, form_add_many_logs=form_add_many_logs, day_datas=day_datas)
 
 @app.route('/remove_log/<day_date>', methods=('GET', 'POST'))
 @login_required
 def remove_log(day_date):
     user = db.User.get(db.User.id == session["user_id"])
     try:
-        #print("Trying to delete date ",day_date," for user with id is ",session["user_id"])
-        db.DayData.get(db.DayData.user == user and db.DayData.date == day_date).delete_instance()
+        #print("Removing log: date is",day_date,"user is",user.username)
+        user_query = db.DayData.select().where(db.DayData.user == user)
+        user_query.select().where(db.DayData.date == day_date).get().delete_instance()
         flash("You've removed a log!", "success")
         return redirect(url_for('mylogs'))
     except db.DoesNotExist:
@@ -321,7 +365,7 @@ def add_blog():
         return redirect(url_for('add_blog'))
     return render_template('add_blog.html', form=form, blogs=blogs)
 
-@app.route('/delete_blog/<blog_id>', methods=('GET', 'POST'))
+@app.route('/delete_blog/<blog_id>', methods=('POST',))
 @login_required
 def delete_blog(blog_id):
     try:
@@ -333,35 +377,42 @@ def delete_blog(blog_id):
 
 # ***************************MY STATS***************************
 
-@app.route('/mystats', methods=('GET', 'POST'))
+@app.route('/mystats', methods=('GET',))
 @login_required
 def mystats():
-    form = forms.MyStats()
+    user = db.User.get(db.User.id == session["user_id"])
+    return render_template('mystats.html')
+
+@app.route('/updatestats', methods=('GET', 'POST'))
+@login_required
+def updatestats():
+    form_update_stats = forms.UpdateStats()
     user = db.User.get(db.User.id == session["user_id"])
 
-    if form.validate_on_submit():
+    if form_update_stats.validate_on_submit():
 
-        if form.weight.data != None:
-            user.set_weight(form.weight.data)
+        if form_update_stats.weight.data != None:
+            user.set_weight(form_update_stats.weight.data)
         
-        if form.height.data != None:
-            user.set_height(form.height.data)
+        if form_update_stats.height.data != None:
+            user.set_height(form_update_stats.height.data)
 
-        if form.birth_date.data != None:
-            user.birth_date = form.birth_date.data
+        if form_update_stats.birth_date.data != None:
+            user.birth_date = form_update_stats.birth_date.data
 
-        if form.gender.data != "None":
-            user.gender = form.gender.data
+        if form_update_stats.gender.data != "None":
+            user.gender = form_update_stats.gender.data
 
-        if form.weight_measurement_preference.data != "None":
-            user.weight_measurement_preference = form.weight_measurement_preference.data
+        if form_update_stats.weight_measurement_preference.data != "None":
+            user.weight_measurement_preference = form_update_stats.weight_measurement_preference.data
 
-        if form.height_measurement_preference.data != "None":
-            user.height_measurement_preference = form.height_measurement_preference.data
+        if form_update_stats.height_measurement_preference.data != "None":
+            user.height_measurement_preference = form_update_stats.height_measurement_preference.data
         user.save()
         flash("Your data was updated!", "success")
-        return redirect(url_for('mystats'))
-    return render_template('mystats.html', form=form)
+        return redirect(url_for('updatestats'))
+    return render_template('updatestats.html', form_update_stats=form_update_stats)
+
 
 # ***************************BLOG***************************
 

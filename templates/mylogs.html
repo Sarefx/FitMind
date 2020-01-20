@@ -1,21 +1,37 @@
 {% from 'macros.html' import render_field %}
+{% from 'macros.html' import simple_render_field %}
 
 {% extends "layout.html" %}
 {% block content %}
 
 <div class="normalPanel">
-    <h1>Add a new log</h1>
-    <form method="POST" action="" class="form" id="form">
-        {{ form.hidden_tag() }}
-        {{ render_field(form.date) }} 
-    
-        {{ render_field(form.cal_plus) }}
-        {{ render_field(form.cal_minus) }}
-        
-        {{ render_field(form.day_weight) }} in {{ current_user.weight_measurement_preference }}
-        
+    <form method="POST" action="" class="form" id="add_log">
+        {{ form_add_log.hidden_tag() }}
+        {{ simple_render_field(form_add_log.date) }} 
+        {{ simple_render_field(form_add_log.cal_plus) }}
+        {{ simple_render_field(form_add_log.cal_minus) }}
+        {{ simple_render_field(form_add_log.day_weight) }} in {{ current_user.weight_measurement_preference }}
     </form>
-    <button form="form" type="submit" class="submit" value="Submit">Add</button>
+    <button form="add_log" type="submit" class="submit" value="Submit">Add Log</button>
+</div>
+<div class="normalPanel">
+    <h3>FOR TESTING: Add many random logs</h3>
+    <p>Start date End date</p>
+    <form method="POST" action="" class="form" id="add_many_logs">
+        {{ form_add_many_logs.hidden_tag() }}
+        {{ simple_render_field(form_add_many_logs.start_date) }}
+        {{ simple_render_field(form_add_many_logs.end_date) }}
+        <br>
+        {{ simple_render_field(form_add_many_logs.cal_plus_min) }}
+        {{ simple_render_field(form_add_many_logs.cal_plus_max) }}
+        <br>
+        {{ simple_render_field(form_add_many_logs.cal_minus_min) }}
+        {{ simple_render_field(form_add_many_logs.cal_minus_max) }}
+        <br>
+        {{ simple_render_field(form_add_many_logs.start_day_weight) }}
+        {{ simple_render_field(form_add_many_logs.end_day_weight) }} in {{ current_user.weight_measurement_preference }}
+    </form>
+    <button form="add_many_logs" type="submit" class="submit" value="Submit">Add Logs</button>
 </div>
 
 <div class="normalPanel">

@@ -57,7 +57,7 @@ p {
   font-size: 130%;
 }
 
-/***** NAVIGATION ******/
+/****** NAVIGATION ******/
 * {
   box-sizing: border-box;
 }
@@ -118,7 +118,8 @@ p {
   }
 }
 
-/*Form Elements*/
+/****** FORMS ******/
+
 form {
   margin: -5px;
   padding: 10px;
@@ -127,6 +128,7 @@ input {
   /*
   width: 100%;
   */
+  width: 130px;
   border: 0;
   border-bottom: 2px solid #D3D8DC;
   outline: 0;
@@ -138,10 +140,6 @@ input {
 input:focus {
   border-color: rgb(218, 10, 10);
   color: #2C3238;
-}
-
-.submit {
-  /* Same info as button */
 }
 
 button{
@@ -173,7 +171,12 @@ button.small {
   text-align: center;
 }
 
-/*Notifications*/
+#add_many_logs > input{
+  width: 175px;
+}
+
+/****** Notifications ******/
+
 .notification {
   text-align: center;
   padding: 10px 20px;

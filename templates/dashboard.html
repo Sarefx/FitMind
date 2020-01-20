@@ -5,16 +5,36 @@
 
 <div class="normalPanel">
     <h1>Your statistics</h1>
-    <h2>7 days</h2>
-    <p>Your <b>deficit</b> for the last 7 days is <b>{{ statistics_data.get('c_d_7') }}</b> compare to the previous 7 days is <b>{{ statistics_data.get('c_d_14') }}</b></p>
-    <p>Your <b>calorie balance</b> for the last 7 days is <b>{{ statistics_data.get('c_b_7') }}</b> compare to the previous 7 days is <b>{{ statistics_data.get('c_b_14') }}</b></p>
-    <p>Your <b>average bodyweight</b> for the last 7 days is <b>{{ statistics_data.get('a_b_7') }}</b> compare to the previous 7 days is <b>{{ statistics_data.get('a_b_14') }}</b></p>
-    
-    <h2>30 days</h2>
-    <p>Your <b>deficit</b> for the last 30 days is <b>{{ statistics_data.get('c_d_30') }}</b> compare to the previous 30 days is <b>{{ statistics_data.get('c_d_60') }}</b></p>
-    <p>Your <b>calorie balance</b> for the last 30 days is <b>{{ statistics_data.get('c_b_30') }}</b> compare to the previous 30 days is <b>{{ statistics_data.get('c_b_60') }}</b></p>
-    <p>Your <b>average bodyweight</b> for the last 30 days is <b>{{ statistics_data.get('a_b_30') }}</b> compare to the previous 30 days is <b>{{ statistics_data.get('a_b_60') }}</b></p>
-
+    <table style="width:100%">
+        <tr>
+            <th></th>
+            <th>Last 7 days</th> 
+            <th>Previous 7 days</th>
+            <th>Last 30 days</th> 
+            <th>Previous 30 days</th>
+        </tr>
+        <tr>
+            <td><b>Deficit</b></td>
+            <td>{{ statistics_data.get('c_d_7') }}</td>
+            <td>{{ statistics_data.get('c_d_14') }}</td>
+            <td>{{ statistics_data.get('c_d_30') }}</td>
+            <td>{{ statistics_data.get('c_d_60') }}</td>   
+        </tr>
+        <tr>
+            <td><b>Calorie balance</b></td>
+            <td>{{ statistics_data.get('c_b_7') }}</td>
+            <td>{{ statistics_data.get('c_b_14') }}</td>
+            <td>{{ statistics_data.get('c_b_30') }}</td>
+            <td>{{ statistics_data.get('c_b_60') }}</td>
+        </tr>
+        <tr>
+            <td><b>Average bodyweight</b></td>
+            <td>{{ statistics_data.get('a_b_7') }}</td>
+            <td>{{ statistics_data.get('a_b_14') }}</td>
+            <td>{{ statistics_data.get('a_b_30') }}</td>
+            <td>{{ statistics_data.get('a_b_60') }}</td>
+        </tr>
+    </table>
     <!--
     <p>Your surplus & deficit balance for the last 7 days is <b>***</b> compare to the previous 7 days is <b>***</b></p>
     <p>Your surplus & deficit balance for the last 30 days is <b>***</b> compare to the previous 30 days is <b>***</b></p>

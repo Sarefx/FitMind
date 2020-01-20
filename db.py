@@ -67,6 +67,12 @@ class User(UserMixin, Model):
         age = age.days / 365.25
         age = int(age)
         return age
+
+    def current_weight_calculated(self):
+        today = datetime.date.today()
+        weight = 0
+        # need to finish this code
+        return weight
     
     def count_logs(self):
         logs_quantity = DayData.select().where(DayData.user == self).count()

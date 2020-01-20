@@ -37,7 +37,7 @@ class LoginForm(FlaskForm):
     email = StringField('Email',validators=[DataRequired(), Email()])
     password = PasswordField('Password',validators=[DataRequired()])
 
-class MyStats(FlaskForm):
+class UpdateStats(FlaskForm):
     weight = FloatField('Bodyweight',validators=[Optional()])
     height = FloatField('Height',validators=[Optional()])
     birth_date = DateField('birth_date',validators=[Optional()])
@@ -52,7 +52,17 @@ class AddLog(FlaskForm):
     date = DateField('date',validators=[DataRequired()])
     cal_plus = IntegerField('Calories consumed',validators=[InputRequired()])
     cal_minus = IntegerField('Calories burnt',validators=[InputRequired()])
-    day_weight = FloatField('Bodyweight',validators=[InputRequired()])    
+    day_weight = FloatField('Bodyweight',validators=[InputRequired()])
+
+class AddManyLogs(FlaskForm):
+    start_date = DateField('Start date',validators=[DataRequired()])
+    end_date = DateField('End date',validators=[DataRequired()])
+    cal_plus_min = IntegerField('Calories plus minimum',validators=[InputRequired()])
+    cal_plus_max = IntegerField('Calories plus maximum',validators=[InputRequired()])
+    cal_minus_min = IntegerField('Calories minus minimum',validators=[InputRequired()])
+    cal_minus_max = IntegerField('Calories minus maximum',validators=[InputRequired()])
+    start_day_weight = FloatField('Start bodyweight',validators=[InputRequired()])
+    end_day_weight = FloatField('End bodyweight',validators=[InputRequired()])
 
 class GetParameters(FlaskForm):
     weight_days = IntegerField('weight_days',validators=[InputRequired(), 
