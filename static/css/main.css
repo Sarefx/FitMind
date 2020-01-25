@@ -137,6 +137,9 @@ input {
   margin: 5px 0 5px;
   color: #777B7E;
 }
+input[type="radio"]{
+  width: 25px;
+}
 input:focus {
   border-color: rgb(218, 10, 10);
   color: #2C3238;

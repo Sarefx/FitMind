@@ -41,4 +41,25 @@
     -->
 </div>
 
+<div class="normalPanel">
+    <div id="chart-container">Your awesome chart will render here!</div>
+</div>
+
+<script>
+
+const dataSource =  JSON.parse('{{ building_log_data|tojson }}');
+  
+  FusionCharts.ready(function() {
+    var myChart = new FusionCharts({
+      type: "msline",
+      renderAt: "chart-container",
+      width: "100%",
+      height: "60%",
+      dataFormat: "json",
+      dataSource
+    }).render();
+  });
+console.log(dataSource);
+</script>
+
 {% endblock %}

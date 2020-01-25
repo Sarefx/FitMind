@@ -7,6 +7,7 @@ import db
 import datetime
 import fitmind
 import random
+import json
 
 app = Flask(__name__)
 app.secret_key = "fmasdmvs,mv.q;)(*&^%$wpoeuxmcmvruei8eoksmdm1245tw1%!@#$*%vsmxcv"
@@ -88,7 +89,6 @@ def login():
 @login_required
 def dashboard():
     user = db.User.get(db.User.id == session["user_id"])
-
     # print("Today date is ",today_date)
     
     calorie_deficit_last_7_days = 0
@@ -104,19 +104,15 @@ def dashboard():
     average_bodyweight_last_30_days = 0
     average_bodyweight_previous_30_days = 0
 
-    #sup_def_balance_last_7_days = 0
-    #sup_def_balance_previous_7_days = 0
-    #sup_def_balance_last_30_days = 0
-    #sup_def_balance_previous_30_days = 0
-
     today_date = datetime.datetime.now()
+
+    user_logs_data_query = db.DayData.get(db.DayData.user == user)
 
     for x in range(60):
         current_date = today_date - datetime.timedelta(days=1+x)
         #print("X is ",x," and current date is ",current_date)
-
         try:
-            day_data = db.DayData.get(db.DayData.user == user and db.DayData.date == current_date)
+            day_data = user_logs_data_query.get(db.DayData.date == current_date)
             deficit = day_data.calorie_plus - day_data.calorie_minus
             calorie_balance = (day_data.calorie_minus - user.calorie_minus_goal) + (user.calorie_plus_goal - day_data.calorie_plus)
             bodyweight = day_data.dayweight
@@ -152,7 +148,66 @@ def dashboard():
         'c_d_30': calorie_deficit_last_30_days, 'c_b_30': calorie_balance_last_30_days, 'a_b_30': average_bodyweight_last_30_days,
         'c_d_60': calorie_deficit_previous_30_days, 'c_b_60': calorie_balance_previous_30_days, 'a_b_60': average_bodyweight_previous_30_days,}
 
-    return render_template('dashboard.html', statistics_data=statistics_data)
+    building_log_data = {
+        'chart': {
+            'caption': "Statistics for the last month",
+            'yaxisname': "Calories",
+            'yAxisMinValue': 0,
+            'yAxisMaxValue': 0,
+            'subcaption': "",
+            'showhovereffect': "1",
+            'numbersuffix': "",
+            'drawcrossline': "1",
+            'plottooltext': "<b>$dataValue</b> $seriesName",
+            'theme': "fusion"
+        },
+        'categories': [{'category': []}],
+        'dataset': [{
+            'seriesname': "Calories In",
+            'data': []
+            },
+            {
+            'seriesname': "Calories Out",
+            'data': []
+        }]
+    }
+    
+    calories_min_value = 100000
+    calories_max_value = 0
+    #print("Today is ",today_date)
+    for x in range(20):
+        checking_date = (today_date - datetime.timedelta(days=(1+x))).strftime("%Y-%m-%d")
+        #print("checking date",checking_date)
+        log_data_query = user_logs_data_query.select().where(db.DayData.date == checking_date)
+
+        building_log_data['categories'][0]['category'].append({'label': checking_date})
+        if log_data_query.exists():
+            log_data = log_data_query.get()
+            #print("Current log date",log_data.date)
+            log_cal_in = log_data.calorie_plus
+            #print("cal in",log_cal_in)
+            log_cal_out = log_data.calorie_minus
+            #print("cal out",log_cal_out)
+            if log_cal_out < calories_min_value:
+                calories_min_value = log_cal_out
+            if log_cal_in < calories_min_value:
+                calories_min_value = log_cal_in
+
+            if log_cal_out > calories_max_value:
+                calories_max_value = log_cal_out
+            if log_cal_in > calories_max_value:
+                calories_max_value = log_cal_in
+
+            building_log_data['dataset'][0]['data'].append({'value': log_cal_in})
+            building_log_data['dataset'][1]['data'].append({'value': log_cal_out})
+    
+    building_log_data['chart']['yAxisMinValue'] = (calories_min_value - 100)
+    building_log_data['chart']['yAxisMaxValue'] = (calories_max_value + 100)
+
+   
+    #print(building_log_data)
+
+    return render_template('dashboard.html', statistics_data=statistics_data, building_log_data=building_log_data)
 
 # ***************************LOGOUT***************************
 
@@ -447,5 +502,5 @@ def not_found(error):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    #app.run(debug=True, port=8000, host='0.0.0.0')
-    app.run()
+    app.run(debug=True, port=8000, host='0.0.0.0')
+    #app.run()
