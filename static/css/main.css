@@ -128,7 +128,7 @@ input {
   /*
   width: 100%;
   */
-  width: 130px;
+  width: 170px;
   border: 0;
   border-bottom: 2px solid #D3D8DC;
   outline: 0;
@@ -140,6 +140,7 @@ input {
 input[type="radio"]{
   width: 25px;
 }
+
 input:focus {
   border-color: rgb(218, 10, 10);
   color: #2C3238;

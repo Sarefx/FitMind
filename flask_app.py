@@ -85,10 +85,16 @@ def login():
 
 # ***************************Dashboard***************************
 
+
+def get_current_user():
+    user = db.User.get(db.User.id == session['_user_id'])
+    return user
+
+
 @app.route('/dashboard', methods=('GET', 'POST'))
 @login_required
 def dashboard():
-    user = db.User.get(db.User.id == session["user_id"])
+    user = get_current_user()
     # print("Today date is ",today_date)
     
     calorie_deficit_last_7_days = 0
@@ -106,13 +112,17 @@ def dashboard():
 
     today_date = datetime.datetime.now()
 
-    user_logs_data_query = db.DayData.get(db.DayData.user == user)
+    #user_logs_data_query = db.DayData.get(db.DayData.user == user)
+    #user_logs_data_query = db.DayData.select().where(db.DayData.user == user)
+
 
     for x in range(60):
         current_date = today_date - datetime.timedelta(days=1+x)
-        #print("X is ",x," and current date is ",current_date)
+        current_date = current_date.strftime("%Y-%m-%d")
+        print("X is",x," and current date is",current_date)
         try:
-            day_data = user_logs_data_query.get(db.DayData.date == current_date)
+            day_data = db.DayData.get(db.DayData.user == user, db.DayData.date == current_date)
+
             deficit = day_data.calorie_plus - day_data.calorie_minus
             calorie_balance = (day_data.calorie_minus - user.calorie_minus_goal) + (user.calorie_plus_goal - day_data.calorie_plus)
             bodyweight = day_data.dayweight
@@ -177,13 +187,9 @@ def dashboard():
     #print("Today is ",today_date)
     for x in range(20):
         checking_date = (today_date - datetime.timedelta(days=(1+x))).strftime("%Y-%m-%d")
-        #print("checking date",checking_date)
-        log_data_query = user_logs_data_query.select().where(db.DayData.date == checking_date)
-
         building_log_data['categories'][0]['category'].append({'label': checking_date})
-        if log_data_query.exists():
-            log_data = log_data_query.get()
-            #print("Current log date",log_data.date)
+        try:
+            log_data = db.DayData.get(db.DayData.user == user, db.DayData.date == checking_date)
             log_cal_in = log_data.calorie_plus
             #print("cal in",log_cal_in)
             log_cal_out = log_data.calorie_minus
@@ -192,19 +198,17 @@ def dashboard():
                 calories_min_value = log_cal_out
             if log_cal_in < calories_min_value:
                 calories_min_value = log_cal_in
-
             if log_cal_out > calories_max_value:
                 calories_max_value = log_cal_out
             if log_cal_in > calories_max_value:
                 calories_max_value = log_cal_in
-
             building_log_data['dataset'][0]['data'].append({'value': log_cal_in})
             building_log_data['dataset'][1]['data'].append({'value': log_cal_out})
+        except db.DoesNotExist:
+            pass
     
-    building_log_data['chart']['yAxisMinValue'] = (calories_min_value - 100)
+    building_log_data['chart']['yAxisMinValue'] = (calories_min_value - 100)  # to give our graph some padding
     building_log_data['chart']['yAxisMaxValue'] = (calories_max_value + 100)
-
-   
     #print(building_log_data)
 
     return render_template('dashboard.html', statistics_data=statistics_data, building_log_data=building_log_data)
@@ -239,12 +243,11 @@ def register():
 @app.route('/mygoals', methods=('GET', 'POST'))
 @login_required
 def mygoals():
+    user = get_current_user()
     form1 = forms.SetLastCountedDate()
     form2 = forms.SetGoals()
     form3 = forms.GenerateGoals()
     
-    user = db.User.get(db.User.id == session["user_id"])
-
     if form1.validate_on_submit() and form1.last_counted_date.data:  # I a second condition to check if there is data to avoid an error
         user.last_time_counted = form1.last_counted_date.data
         #print("user is ",user.username," and last counted date is",form1.last_counted_date.data)
@@ -252,13 +255,17 @@ def mygoals():
         flash("The last counted date was set!", "success")
         return redirect(url_for('mygoals'))
 
-    if form2.validate_on_submit() and ((form2.calorie_minus_goal.data is not None) or (form2.calorie_plus_goal.data is not None) or (form2.calorie_balance.data is not None)):
+    if form2.validate_on_submit() and ((form2.calorie_minus_goal.data is not None) or (form2.calorie_plus_goal.data is not None) or (form2.calorie_reserve.data is not None) or (form2.protein_goal.data is not None) or (form2.protein_reserve.data is not None)):
         if form2.calorie_minus_goal.data is not None:
             user.calorie_minus_goal = form2.calorie_minus_goal.data
         if form2.calorie_plus_goal.data is not None:
             user.calorie_plus_goal = form2.calorie_plus_goal.data
-        if form2.calorie_balance.data is not None:
-            user.calorie_balance = form2.calorie_balance.data
+        if form2.calorie_reserve.data is not None:
+            user.calorie_reserve = form2.calorie_reserve.data
+        if form2.protein_goal.data is not None:
+            user.protein_goal = form2.protein_goal.data    
+        if form2.protein_reserve.data is not None:
+            user.protein_reserve = form2.protein_reserve.data
         user.save()
         flash("Your goals were set!", "success")
         return redirect(url_for('mygoals'))
@@ -282,20 +289,32 @@ def mygoals():
 @app.route('/count_yesterday', methods=('GET', 'POST'))
 @login_required
 def count_yesterday():
-    user = db.User.get(db.User.id == session["user_id"])
+    user = get_current_user()
     date_today = datetime.datetime.now()
     date_yesterday = date_today - datetime.timedelta(days=1)
-    
+    day_logs = db.DayData.select().where(db.DayData.user == user)
     try:
         while user.last_time_counted.strftime("%Y-%m-%d") <= date_yesterday.strftime("%Y-%m-%d"):
-            
             #print("Trying to count date ",date_yesterday.strftime("%Y-%m-%d")," and the last day counted is ",user.last_time_counted.strftime("%Y-%m-%d"))
             try:
-                day_log = db.DayData.get(db.DayData.user == user and db.DayData.date == user.last_time_counted)
-
-                balance =  (day_log.calorie_minus - user.calorie_minus_goal) + (user.calorie_plus_goal - day_log.calorie_plus)
+                day_log = day_logs.get(db.DayData.date == user.last_time_counted)
+                print("On",user.last_time_counted.strftime("%Y-%m-%d")," day calories in is",user.calorie_plus_goal," day calories out is",day_log.calorie_minus," and day protein is",day_log.protein)
+                day_calorie_balance = (day_log.calorie_minus - user.calorie_minus_goal) + (user.calorie_plus_goal - day_log.calorie_plus)
+                day_protein_reserve = day_log.protein - user.protein_goal
                 #print("Trying to calorie minus ",day_log.calorie_minus," minus calorie minus goal ",user.calorie_minus_goal," plus calories plus goal ",user.calorie_plus_goal," minus calorie plus ",day_log.calorie_plus)
-                user.calorie_balance =  user.calorie_balance + balance
+                #user.calorie_balance = user.calorie_balance * .95  # remove 5% of calories of balance of calories
+                # if (day_protein_reserve < 0):
+                #     day_protein_reserve = day_protein_reserve / .8
+                # else:
+                #     day_protein_reserve = day_protein_reserve * .8
+                # if (user.protein_reserve < 0):
+                #     user.protein_reserve = user.protein_reserve / .8
+                # else:
+                #     user.protein_reserve = user.protein_reserve * .8
+                user.protein_reserve = user.protein_reserve + day_protein_reserve
+                user.calorie_balance = user.calorie_balance + day_calorie_balance  # adds day calorie balance to overall calorie balance
+
+                print("On",user.last_time_counted.strftime("%Y-%m-%d")," day calorie balance is",day_calorie_balance," overall calorie balance is",user.calorie_balance," and day protein reserve is",day_protein_reserve," overall protein reserve",user.protein_reserve)
                 user.last_time_counted = user.last_time_counted + datetime.timedelta(days=1)
                 #print("Calorie balance is ",user.calorie_balance," and last counted day is ",user.last_time_counted)
                 user.save() 
@@ -315,7 +334,8 @@ def count_yesterday():
 def mylogs():
     form_add_log = forms.AddLog()
     form_add_many_logs = forms.AddManyLogs()
-    user = db.User.get(db.User.id == session["user_id"])
+
+    user = get_current_user()
     day_datas = db.DayData.select().where(db.DayData.user == user).order_by(db.DayData.date.desc())
 
     if form_add_log.validate_on_submit() and form_add_log.cal_plus.data is not None:
@@ -327,12 +347,12 @@ def mylogs():
         else:
             cal_plus = form_add_log.cal_plus.data
             cal_minus = form_add_log.cal_minus.data
+            protein = form_add_log.protein.data
             day_weight = form_add_log.day_weight.data
             date = form_add_log.date.data
-
-            db.DayData.create_daydata(user=user, calorie_plus=cal_plus, calorie_minus=cal_minus, dayweight=day_weight, date=date)
-
-            user.set_weight(day_weight)
+            day_data = db.DayData.create_daydata(user=user, calorie_plus=cal_plus, calorie_minus=cal_minus, dayweight=day_weight, date=date)
+            day_data.protein = protein
+            day_data.save()
             user.save()
             flash("Your new day log was added!", "success")
             return redirect(url_for('mylogs'))
@@ -377,7 +397,7 @@ def mylogs():
 @app.route('/remove_log/<day_date>', methods=('GET', 'POST'))
 @login_required
 def remove_log(day_date):
-    user = db.User.get(db.User.id == session["user_id"])
+    user = get_current_user()
     try:
         #print("Removing log: date is",day_date,"user is",user.username)
         user_query = db.DayData.select().where(db.DayData.user == user)
@@ -435,14 +455,14 @@ def delete_blog(blog_id):
 @app.route('/mystats', methods=('GET',))
 @login_required
 def mystats():
-    user = db.User.get(db.User.id == session["user_id"])
+    user = get_current_user()
     return render_template('mystats.html')
 
 @app.route('/updatestats', methods=('GET', 'POST'))
 @login_required
 def updatestats():
     form_update_stats = forms.UpdateStats()
-    user = db.User.get(db.User.id == session["user_id"])
+    user = get_current_user()
 
     if form_update_stats.validate_on_submit():
 
@@ -482,7 +502,7 @@ def blog():
 @login_required
 def changepassword():
     form = forms.ChangePasword()
-    user = db.User.get(db.User.id == session["user_id"])
+    user = get_current_user()
 
     if form.validate_on_submit():           
         if check_password_hash(user.password, form.old_password.data):
@@ -495,6 +515,74 @@ def changepassword():
             flash("Your password doesnt match!", "error")
     return render_template('changepassword.html', form=form)
 
+# ***************************SIMPLE LOOK***************************
+
+@app.route('/simplelook', methods=('GET', 'POST'))
+@login_required
+def simplelook():
+    user = get_current_user()
+    form = forms.SetWeeklyGoal()
+    form.weekly_goal.label.text = "Set your weekly goal in {}".format(user.weight_measurement_preference)
+    today = datetime.date.today()
+
+    if form.validate_on_submit():
+        user.reserve_start_date = today
+        user.weekly_goal_start_date = today
+        weekly_goal = form.weekly_goal.data
+        user.weekly_goal = weekly_goal
+
+        daily_goals = fitmind.generate_daily_goals(user.weekly_goal, user.weight, user.height, user.gender, user.age_calculated())
+        user.calorie_minus_goal = daily_goals['cal_out_goal']
+        user.calorie_plus_goal = daily_goals['cal_in_goal']
+        user.protein_goal = daily_goals['protein_goal']
+
+        print("{} {} {}".format(user.calorie_minus_goal, user.calorie_plus_goal, user.protein_goal))
+        user.save()
+        return redirect(url_for('simplelook'))
+    return render_template('simplelook.html', form=form)
+
+@app.route('/count_one_day', methods=('GET', 'POST'))
+@login_required
+def count_one_day():
+    user = get_current_user()
+    today = datetime.date.today()
+    if (user.last_time_counted < today):
+        day_to_count = user.last_time_counted + datetime.timedelta(days=1)
+        try:
+            user_log = db.DayData.get(db.DayData.user == user and db.DayData.date == day_to_count)
+            cal_reserve, protein_reserve = fitmind.calculate_reserve(user.calorie_plus_goal, user.calorie_minus_goal, user.calorie_reserve, user.protein_goal, user.protein_reserve, user_log)
+            print("The old cal reserve: {} and new: {}. The old protein reserve: {} and new : {}".format(user.calorie_reserve,cal_reserve,user.protein_reserve,protein_reserve))
+            user.calorie_reserve = cal_reserve
+            user.protein_reserve = protein_reserve
+            user.last_time_counted = day_to_count
+            user.save()
+            flash("The day was counted", "success")
+        except:
+            user.last_time_counted = day_to_count
+            user.save()
+            flash("The log for the day doesnt exist", "error")
+            return redirect(url_for('simplelook'))
+    else:
+        flash("Yesterday was already counted", "error")
+    return redirect(url_for('simplelook'))
+
+@app.route('/recount_2weeks', methods=('GET', 'POST'))
+@login_required
+def recount_2weeks():
+    pass
+
+# ***************************TEST SIMPLE LOOK***************************
+
+@app.route('/test_simplelook', methods=('GET', 'POST'))
+@login_required
+def test_simplelook():
+    user = get_current_user()
+    form = forms.SetReserveStartDate()
+    if form.validate_on_submit():
+        user.reserve_start_date = form.reserve_start_date.data
+        user.save()
+        return redirect(url_for('test_simplelook'))
+    return render_template('test_simplelook.html', form=form)
 # ***************************ERROR HANDLING***************************
 
 @app.errorhandler(404)

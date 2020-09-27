@@ -1,0 +1,23 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="normalPanel">
+    <h1>Daily Goals</h1>
+    <p>Burn {{ current_user.calorie_minus_goal }} calories</p>
+    <p>Consume {{ current_user.calorie_plus_goal }} calories</p>
+    <p>Consume {{ current_user.protein_goal }} grams of protein</p>
+</div>
+
+<div class="normalPanel">
+    <h1>Weekly Weightloss Goal</h1>
+    <p>{{ current_user.weekly_goal }} kg was set on {{ current_user.weekly_goal_start_date }}</p>
+    <form method="POST" action="" class="form" id="weekly_goal">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.weekly_goal) }}
+    </form>
+    <button form="weekly_goal" type="submit" class="submit" value="Submit">Set</button>
+</div>
+
+{% endblock %}

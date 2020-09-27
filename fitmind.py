@@ -1,9 +1,11 @@
+# Rules for this library:
+# 1) No Database manipulation inside
+# 2) Use efficient data manipulation
+
 import datetime
 import db
 
 fitbit_error = 1.0123145423513231
-
-
 
 # gives us an average value
 def avg(array):
@@ -109,7 +111,7 @@ def get_basal_metabolic_rate(weight, height, gender, age):
         calories_consume_benchmark = 88.362 + (4.799 * height) + (13.397 * weight) - (5.677 * age)
     elif gender == "female":
         calories_consume_benchmark = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
-    elif gender == "other":
+    elif gender == "other" or gender == "N/A":
         one_benchmark = 88.362 + (4.799 * height) + (13.397 * weight) - (5.677 * age)
         two_benchmark = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
         calories_consume_benchmark = (one_benchmark + two_benchmark) / 2
@@ -274,6 +276,45 @@ def generate_goals(bw_goal, user):
 
     results = {'cal_plus_goal': calories_consume_benchmark, 'cal_minus_goal': calories_burn_benchmark, 'bw_present': user_weight}
     return results
+
+def generate_daily_goals(weekly_goal, user_weight, user_height, user_gender, user_age):
+    calories_in_benchmark = get_basal_metabolic_rate(user_weight, user_height, user_gender, user_age)
+    calories_out_benchmark = calories_in_benchmark + (7700 * weekly_goal) / 7
+    if (weekly_goal < 0):
+        protein_goal = user_weight * 2.1
+    if (weekly_goal == 0):
+        protein_goal = user_weight * 2
+    if (weekly_goal > 0):
+        protein_goal = user_weight * 1.9
+    results = {'cal_in_goal': calories_in_benchmark, 'cal_out_goal': calories_out_benchmark, 'protein_goal': protein_goal}
+    return results
+
+def calculate_reserve(cal_in_goal, cal_out_goal, cal_reserve, protein_goal, protein_reserve, user_log):
+    cal_reserve = calorie_decay(cal_reserve)
+    protein_reserve = protein_decay(protein_reserve)
+
+    cal_reserve += count_calorie_balance(cal_in_goal, cal_out_goal, user_log.calorie_plus, user_log.calorie_minus)
+    protein_reserve += count_protein_balance(protein_goal, user_log.protein)
+    protein_reserve = int(protein_reserve)
+    return cal_reserve, protein_reserve
+
+def count_calorie_balance(cal_in_goal, cal_out_goal, cal_in, cal_out):
+    balance_goal = cal_out_goal - cal_in_goal  # 500 = 2500 - 2000
+    day_balance = cal_out - cal_in # 600 = 2600 - 200
+    cal_balance =  day_balance - balance_goal
+    return cal_balance
+
+def count_protein_balance(protein_in_goal, protein_in):
+    protein_balance = protein_in - protein_in_goal
+    return protein_balance
+
+def calorie_decay(calories):
+    calories = int(calories * .95)
+    return calories
+
+def protein_decay(protein):
+    protein = protein * .8
+    return protein
 
 def generate_goals2(user_weight, user_height, user_age, user_gender, bw_goal):
 

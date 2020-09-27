@@ -4,9 +4,13 @@
 {% block content %}
 
 <div class="normalPanel">
-    <h1>Your goals are</h1>
-    <p>Burn <b>{{ current_user.calorie_minus_goal }}</b> and consume <b>{{ current_user.calorie_plus_goal }}</b> calories.</p>
-    <p><b>Calorie balance</b> is <b>{{ current_user.calorie_balance }}</b></p>
+    <h1>Your goals</h1>
+    <p>Consume <b>{{ current_user.calorie_plus_goal }}</b> and burn <b>{{ current_user.calorie_minus_goal }}</b> calories</p>
+    <p>Consume <b>{{ current_user.protein_goal }}</b> grams of protein</p>
+</div>
+<div class="normalPanel">
+    <p><b>Calorie reserve</b> is <b>{{ current_user.calorie_reserve }}</b>. It will decay 5% each day</p>
+    <p><b>Protein reserve</b> is <b>{{ current_user.protein_reserve }}</b> grams. It will decay 20% each day</p>
     <p>Last time balance was counted is <b>{{ current_user.last_time_counted.strftime("%m-%d-%Y") }}</b></p>
 </div>
 
@@ -28,9 +32,11 @@
     <h1>Set your goals manually</h1>
     <form method="POST" action="" class="form" id="form11">
         {{ form2.hidden_tag() }}
-        {{ render_field(form2.calorie_minus_goal) }}
         {{ render_field(form2.calorie_plus_goal) }}
-        {{ render_field(form2.calorie_balance) }}
+        {{ render_field(form2.calorie_minus_goal) }}
+        {{ render_field(form2.calorie_reserve) }}
+        {{ render_field(form2.protein_goal) }}
+        {{ render_field(form2.protein_reserve) }}
     </form>
     <button form="form11" type="submit" class="submit" value="Submit">Set</button>
 </div>

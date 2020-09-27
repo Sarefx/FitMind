@@ -50,8 +50,9 @@ class UpdateStats(FlaskForm):
 
 class AddLog(FlaskForm):
     date = DateField('date',validators=[DataRequired()])
-    cal_plus = IntegerField('Calories consumed',validators=[InputRequired()])
-    cal_minus = IntegerField('Calories burnt',validators=[InputRequired()])
+    cal_plus = IntegerField('Calories in',validators=[InputRequired()])
+    cal_minus = IntegerField('Calories out',validators=[InputRequired()])
+    protein = IntegerField('Protein',validators=[Optional()])
     day_weight = FloatField('Bodyweight',validators=[InputRequired()])
 
 class AddManyLogs(FlaskForm):
@@ -74,9 +75,11 @@ class GetParameters(FlaskForm):
         NumberRange(min=-1, max=2, message="The number needs to be between -2.0 and 2.0")])
 
 class SetGoals(FlaskForm):
-    calorie_minus_goal = IntegerField('Calorie minus',validators=[Optional()])
-    calorie_plus_goal = IntegerField('Calorie plus',validators=[Optional()])
-    calorie_balance = IntegerField('Calorie balance',validators=[Optional()])
+    calorie_minus_goal = IntegerField('Calorie minus goal',validators=[Optional()])
+    calorie_plus_goal = IntegerField('Calorie plus goal',validators=[Optional()])
+    calorie_reserve = IntegerField('Calorie reserve',validators=[Optional()])
+    protein_goal = IntegerField('Protein goal',validators=[Optional()])
+    protein_reserve = IntegerField('Protein reserve',validators=[Optional()])
 
 class GenerateGoals(FlaskForm):
     bw_goal = FloatField('',validators=[Optional()])
@@ -106,3 +109,9 @@ class AddBlog(FlaskForm):
     title = StringField('Title',validators=[DataRequired(),])
     text = TextAreaField('Text',validators=[DataRequired(),])
     author = StringField('Author',validators=[DataRequired(),])
+
+class SetWeeklyGoal(FlaskForm):
+    weekly_goal = FloatField('Set your weekly goal',validators=[DataRequired()])
+
+class SetReserveStartDate(FlaskForm):
+    reserve_start_date = DateField('',validators=[DataRequired()])

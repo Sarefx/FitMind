@@ -7,28 +7,34 @@ from playhouse.migrate import *
 DATABASE = SqliteDatabase('../users.db')
 
 class User(UserMixin, Model):
-    username = CharField(max_length=255, unique=True)
-    email = CharField(max_length=255, unique=True)
-    password = CharField(max_length=1000)
-    weight = FloatField(default=0)  # in kgs
+    username = CharField(max_length=40, unique=True)
+    email = CharField(max_length=40, unique=True)
+    password = CharField(max_length=20)
+    weight = FloatField(default=0)  # in kg
     height = FloatField(default=0)  # in cm
     gender = CharField(default='N/A', max_length=10)  # male, female, other
-
     birth_date = DateField(default=datetime.date.today)
 
-    weight_measurement_preference =  CharField(default='kg', max_length=10)  # other choice is lbs
-    height_measurement_preference =  CharField(default='cm', max_length=10)  # other choice is inches
+    weight_measurement_preference =  CharField(default='kg', max_length=6)  # other choice is lbs
+    height_measurement_preference =  CharField(default='cm', max_length=6)  # other choice is inches
     
     calorie_plus_goal = IntegerField(default=0)
     calorie_minus_goal = IntegerField(default=0)
-    calorie_balance = IntegerField(default=0)
-    protein_balance = IntegerField(default=0)
+    calorie_reserve = IntegerField(default=0)
 
-    last_time_counted = DateTimeField(default=datetime.datetime.now)
+    protein_goal = IntegerField(default=0)
+    protein_reserve = IntegerField(default=0)
+
+    reserve_start_date = DateField(default=datetime.date.today)
+    last_time_counted = DateField(default=datetime.date.today)
+
     is_calorie_tracking_system_active = BooleanField(default=False)
 
     joined_at = DateTimeField(default=datetime.datetime.now)
     is_admin = BooleanField(default=False)
+
+    weekly_goal_start_date = DateField(default=datetime.date.today)
+    weekly_goal = FloatField(default=0)  # in kg
 
     def set_weight(self, weight):
         if self.weight_measurement_preference == "kg":
@@ -96,14 +102,10 @@ class DayData(Model):
     carbohydrate = IntegerField(default=0)
     protein = IntegerField(default=0)
     protein_goal = IntegerField(default=0)
-    protein_balance = IntegerField(default=0)
     fat = IntegerField(default=0) 
     
     calorie_plus_goal = IntegerField(default=0)
     calorie_minus_goal = IntegerField(default=0)
-    calorie_balance_total = IntegerField(default=0)
-    calorie_balance = IntegerField(default=0)
-    calorie_deficit = IntegerField(default=0)
 
     calorie_minus = IntegerField(default=0)
 
@@ -215,23 +217,27 @@ def populate_admin_data():
 
 def populate_test_data():
     data = (
-        ('test1', 'test1@test.com', 'password', 100, 150, 'male', 
+        ('test', 'test@test.com', '1234', 100, 150, 'male', 
             ((3000,3500, 105, "2019-03-01"), (2900,3450, 104.9, "2019-03-02"), (3100,3810, 104.8, "2019-03-03"),
             (3050,3710, 104.8, "2019-03-04"), (2900,3550, 104.8, "2019-03-05"), (3000,3810, 104.7, "2019-03-06"),
             (3010,3730, 104.6, "2019-03-07"), (3200,3630, 104.6, "2019-03-08"), (3130,3820, 104.5, "2019-03-09"))),
-        ('test2', 'test2@test.com', 'password', 100, 150, 'male',
+        ('test1', 'test1@test.com', '1234', 100, 150, 'male', 
             ((3000,3500, 105, "2019-03-01"), (2900,3450, 104.9, "2019-03-02"), (3100,3810, 104.8, "2019-03-03"),
             (3050,3710, 104.8, "2019-03-04"), (2900,3550, 104.8, "2019-03-05"), (3000,3810, 104.7, "2019-03-06"),
             (3010,3730, 104.6, "2019-03-07"), (3200,3630, 104.6, "2019-03-08"), (3130,3820, 104.5, "2019-03-09"))),
-        ('test3', 'test3@test.com', 'password', 100, 150, 'male',
+        ('test2', 'test2@test.com', '1234', 100, 150, 'male',
             ((3000,3500, 105, "2019-03-01"), (2900,3450, 104.9, "2019-03-02"), (3100,3810, 104.8, "2019-03-03"),
             (3050,3710, 104.8, "2019-03-04"), (2900,3550, 104.8, "2019-03-05"), (3000,3810, 104.7, "2019-03-06"),
             (3010,3730, 104.6, "2019-03-07"), (3200,3630, 104.6, "2019-03-08"), (3130,3820, 104.5, "2019-03-09"))),
-        ('test4', 'test4@test.com', 'password', 100, 150, 'male',
+        ('test3', 'test3@test.com', '1234', 100, 150, 'male',
             ((3000,3500, 105, "2019-03-01"), (2900,3450, 104.9, "2019-03-02"), (3100,3810, 104.8, "2019-03-03"),
             (3050,3710, 104.8, "2019-03-04"), (2900,3550, 104.8, "2019-03-05"), (3000,3810, 104.7, "2019-03-06"),
             (3010,3730, 104.6, "2019-03-07"), (3200,3630, 104.6, "2019-03-08"), (3130,3820, 104.5, "2019-03-09"))),
-        ('test5', 'test5@test.com', 'password', 100, 150, 'male',
+        ('test4', 'test4@test.com', '1234', 100, 150, 'male',
+            ((3000,3500, 105, "2019-03-01"), (2900,3450, 104.9, "2019-03-02"), (3100,3810, 104.8, "2019-03-03"),
+            (3050,3710, 104.8, "2019-03-04"), (2900,3550, 104.8, "2019-03-05"), (3000,3810, 104.7, "2019-03-06"),
+            (3010,3730, 104.6, "2019-03-07"), (3200,3630, 104.6, "2019-03-08"), (3130,3820, 104.5, "2019-03-09"))),
+        ('test5', 'test5@test.com', '1234', 100, 150, 'male',
             ((3000,3500, 105, "2019-03-01"), (2900,3450, 104.9, "2019-03-02"), (3100,3810, 104.8, "2019-03-03"),
             (3050,3710, 104.8, "2019-03-04"), (2900,3550, 104.8, "2019-03-05"), (3000,3810, 104.7, "2019-03-06"),
             (3010,3730, 104.6, "2019-03-07"), (3200,3630, 104.6, "2019-03-08"), (3130,3820, 104.5, "2019-03-09")))
@@ -257,9 +263,9 @@ def view_all_data():
             print("Calories plus: ",daydata.calorie_plus," Calories minus: ",daydata.calorie_minus," Weight: ",daydata.dayweight ," Date: ",daydata.date)
 
 if __name__ == '__main__':
-    #initialize()
-    #populate_admin_data()
-    #populate_test_data()
+    initialize()
+    populate_admin_data()
+    populate_test_data()
     #make_changes()
     #view_all_data()
     pass

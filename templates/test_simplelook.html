@@ -1,0 +1,24 @@
+{% from 'macros.html' import render_field %}
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="normalPanel">
+    <h1>Daily Goals</h1>
+</div>
+
+<div class="normalPanel">
+    <h1>Reserve</h1>
+    <p>Set reserve start date</p>
+    <form method="POST" action="" class="form" id="reserve_start_date">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.reserve_start_date) }}
+    </form>
+    <button form="reserve_start_date" type="submit" class="submit" value="Submit">Set</button>
+</div>
+
+<div class="normalPanel">
+    <h1>Weekly Goal</h1>
+</div>
+
+{% endblock %}
